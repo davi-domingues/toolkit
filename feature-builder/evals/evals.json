@@ -1,0 +1,55 @@
+{
+  "skill_name": "feature-builder",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "implemente a feature sequential-report que está em feature-builder-workspace/test-features/sequential-report/",
+      "expected_output": "Orchestrator discovers the sequential-report feature, reads 2 tasks with sequential dependencies, plans single wave, executes developer→verifier for each task sequentially, generates report.md with per-task status.",
+      "files": [],
+      "expectations": [
+        "Discovers the task directory from the explicit path and confirms with user",
+        "Reads both task files and identifies task-002 depends on task-001",
+        "Plans a single sequential wave (no parallel tasks)",
+        "Spawns a Developer sub-agent for task-001 with full task content",
+        "Spawns a Verifier sub-agent for task-001 after developer completes",
+        "Spawns Developer for task-002 only after task-001 is verified",
+        "Spawns Verifier for task-002 and marks it as Complete or Failed",
+        "Produces report.md with per-task breakdown, summary, and status",
+        "Creates the output files (report.md with skeleton + populated data)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "implement with sub-agents the parallel-modules feature",
+      "expected_output": "Orchestrator searches for parallel-modules, finds it in feature-builder-workspace/test-features/parallel-modules/, analyzes 3 tasks with parallel dependencies, plans 2 waves (parallel then sequential), executes implementation, generates report.",
+      "files": [],
+      "expectations": [
+        "Searches for the feature name in the filesystem and finds the directory",
+        "Reads all 3 task files and identifies that task-001 and task-002 have no dependencies (parallel)",
+        "Identifies that task-003 depends on both task-001 and task-002 (second wave)",
+        "Plans Wave 1 with task-001 and task-002 in parallel, Wave 2 with task-003",
+        "Spawns Developer sub-agents for task-001 AND task-002 in the same message (parallel)",
+        "Spawns Verifiers for both task-001 and task-002 after developers complete",
+        "Spawns Developer for task-003 only after both verifiers approve",
+        "Generates report.md with per-task status and wave breakdown"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "desenvolva a feature tdd-demo, fazendo commit atômico por task e abrindo PR",
+      "expected_output": "Orchestrator discovers tdd-demo feature, reads 2 tasks with TDD mode in task-001, plans execution with auto-commit enabled (atomic mode), executes developer→verifier for each task, creates git branch, commits, and opens PR.",
+      "files": [],
+      "expectations": [
+        "Offers auto-commit opt-in and user accepts with atomic mode + PR",
+        "Discovers the tdd-demo feature by searching",
+        "Reads task-001 and detects TDD Mode section",
+        "Spawns Developer for task-001 with TDD instructions included",
+        "Verifier checks TDD criteria (tests written, implemented, passing)",
+        "Spawns Developer for task-002 after task-001 is complete",
+        "Creates git branch (feat/<slug>) for the implementation",
+        "Makes atomic commits — one per completed task",
+        "Pushes branch and creates PR via gh CLI"
+      ]
+    }
+  ]
+}
