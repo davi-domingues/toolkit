@@ -9,6 +9,6 @@
     "install:tools": "node scripts/toolkit.mjs install",
     "status": "node scripts/toolkit.mjs status",
     "validate": "node scripts/toolkit.mjs validate",
-    "test": "node --test \"test/*.test.mjs\""
+    "test": "node --test"
   }
 }
