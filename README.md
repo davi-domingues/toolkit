@@ -88,6 +88,10 @@ Installer principles:
 2. Run `npm run validate && npm test`.
 3. Note it in `CHANGELOG.md` and open a PR. CI runs validation and tests on Node 20 and 22.
 
+## Roadmap
+
+Ideas and next steps live in [ROADMAP.md](ROADMAP.md).
+
 ## Versioning
 
 [SemVer](https://semver.org) in `package.json`, history in the [CHANGELOG](CHANGELOG.md), releases through `vX.Y.Z` tags.
