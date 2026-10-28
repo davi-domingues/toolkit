@@ -19,19 +19,20 @@ Skills atuais: `expo-expert`, `feature-builder`, `java-testing-patterns`.
 
 ## Destinos
 
-| Ferramenta | skills | agents | rules |
-|---|---|---|---|
-| kiro | `~/.kiro/skills` | - | `~/.kiro/steering` |
-| claude | `~/.claude/skills` | `~/.claude/agents` | `~/.claude/rules` |
-| opencode | `~/.config/opencode/skills` | - | - |
+| Ferramenta | skills | agents | rules | prompts |
+|---|---|---|---|---|
+| kiro | `~/.kiro/skills` | - | `~/.kiro/steering` | `~/.kiro/prompts` |
+| claude | `~/.claude/skills` | `~/.claude/agents` | `~/.claude/rules` | `~/.claude/commands` |
+| opencode | `~/.config/opencode/skills` | - | - | `~/.config/opencode/commands` |
 
-`rules/` é o nome neutro: cada ferramenta o chama de um jeito (steering no Kiro, rules no Claude Code). Codex, OpenCode, Copilot e Gemini leem um único arquivo (`AGENTS.md`/`GEMINI.md`), não uma pasta, por isso ainda não são alvo de rules.
+`rules/` é o nome neutro: cada ferramenta o chama de um jeito (steering no Kiro, rules no Claude Code). Codex, OpenCode, Copilot e Gemini leem um único arquivo (`AGENTS.md`/`GEMINI.md`) e o toolkit não gera arquivo concatenado, então não são alvo de rules.
 
 ## Uso
 
 Requer Node 20+.
 
 ```bash
+node scripts/toolkit.mjs list                       # assets e destinos
 node scripts/toolkit.mjs install --dry-run          # simula
 node scripts/toolkit.mjs install                    # linka em todas as ferramentas
 node scripts/toolkit.mjs install --tools kiro       # só no Kiro

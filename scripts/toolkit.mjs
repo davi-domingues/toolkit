@@ -6,9 +6,10 @@ import { listAssets, resolveTargets, validateSkills, ROOT } from "./lib.mjs";
 const USAGE = `Uso: node scripts/toolkit.mjs <comando> [opcoes]
 
 Comandos:
-  install     Instala skills/agents/rules nas ferramentas (padrao: link)
+  install     Instala skills/agents/rules/prompts nas ferramentas (padrao: link)
   uninstall   Remove somente o que este toolkit instalou
   status      Mostra o estado de cada asset em cada ferramenta
+  list        Lista os assets do toolkit e onde cada tipo e instalado
   validate    Valida as skills do repo
 
 Opcoes:
@@ -98,6 +99,16 @@ export function run(argv, root = ROOT) {
   if (opts.command === "validate") {
     const problems = validateSkills(root);
     return problems.length ? problems.map((p) => `ERRO ${p}`) : ["OK: todas as skills validas"];
+  }
+  if (opts.command === "list") {
+    const targets = resolveTargets();
+    for (const kind of ["skills", "agents", "rules", "prompts"]) {
+      const names = listAssets(kind, root).map((a) => a.name);
+      const where = Object.entries(targets).filter(([, t]) => t[kind]).map(([tool, t]) => `${tool}:${t[kind]}`);
+      out.push(`${kind} (${names.length}) -> ${where.join(" | ") || "sem destino"}`);
+      names.forEach((n) => out.push(`  - ${n}`));
+    }
+    return out;
   }
   if (!["install", "uninstall", "status"].includes(opts.command)) throw new Error(USAGE);
 

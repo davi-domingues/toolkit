@@ -12,6 +12,9 @@ function fixture() {
   fs.writeFileSync(path.join(root, "skills", "demo", "SKILL.md"), "---\nname: demo\ndescription: skill de teste\n---\n# demo\n");
   fs.mkdirSync(path.join(root, "rules"));
   fs.writeFileSync(path.join(root, "rules", "global.md"), "# regras\n");
+  fs.mkdirSync(path.join(root, "prompts"));
+  fs.writeFileSync(path.join(root, "prompts", "p.md"), "prompt\n");
+  fs.writeFileSync(path.join(root, "prompts", ".gitkeep"), "");
   process.env.TOOLKIT_HOME = fs.mkdtempSync(path.join(os.tmpdir(), "tk-home-"));
   return root;
 }
@@ -41,6 +44,7 @@ test("install e uninstall sao idempotentes e nao tocam em arquivos alheios", () 
   const first = run(["install", "--tools", "kiro"], root);
   assert.ok(first.some((l) => l.includes("kiro/skills/demo: PULADO")));
   assert.ok(fs.existsSync(path.join(home, ".kiro", "steering", "global.md")));
+  assert.ok(fs.existsSync(path.join(home, ".kiro", "prompts", "p.md")));
 
   fs.rmSync(foreign, { recursive: true });
   run(["install", "--tools", "kiro"], root);
@@ -49,6 +53,14 @@ test("install e uninstall sao idempotentes e nao tocam em arquivos alheios", () 
   run(["uninstall", "--tools", "kiro"], root);
   assert.equal(fs.existsSync(foreign), false);
   assert.equal(fs.existsSync(path.join(root, "skills", "demo", "SKILL.md")), true);
+});
+
+test("list mostra rules e prompts com destinos e ignora .gitkeep", () => {
+  const root = fixture();
+  const lines = run(["list"], root);
+  assert.ok(lines.some((l) => l.startsWith("rules (1)") && l.includes("steering") && l.includes(path.join(".claude", "rules"))));
+  assert.ok(lines.some((l) => l.startsWith("prompts (1)") && l.includes("commands")));
+  assert.ok(lines.includes("  - p.md"));
 });
 
 test("dry-run nao altera o disco", () => {
