@@ -6,7 +6,7 @@ import { listAssets, resolveTargets, validateSkills, ROOT } from "./lib.mjs";
 const USAGE = `Uso: node scripts/toolkit.mjs <comando> [opcoes]
 
 Comandos:
-  install     Instala skills/agents/steering nas ferramentas (padrao: link)
+  install     Instala skills/agents/rules nas ferramentas (padrao: link)
   uninstall   Remove somente o que este toolkit instalou
   status      Mostra o estado de cada asset em cada ferramenta
   validate    Valida as skills do repo

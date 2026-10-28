@@ -26,7 +26,7 @@ export function parseFrontmatter(text) {
 /**
  * Lists the assets of one kind found in the toolkit.
  *
- * @param {"skills"|"agents"|"steering"} kind asset kind
+ * @param {"skills"|"agents"|"rules"} kind asset kind
  * @param {string} [root] toolkit root
  * @returns {{name: string, path: string, isDir: boolean}[]} discovered assets
  */
@@ -44,17 +44,18 @@ export function listAssets(kind, root = ROOT) {
  * Resolves where each tool expects every asset kind.
  *
  * @param {string} [home] user home directory
- * @returns {Record<string, Partial<Record<"skills"|"agents"|"steering", string>>>} tool targets
+ * @returns {Record<string, Partial<Record<"skills"|"agents"|"rules", string>>>} tool targets
  */
 export function resolveTargets(home = process.env.TOOLKIT_HOME || os.homedir()) {
   return {
     kiro: {
       skills: path.join(home, ".kiro", "skills"),
-      steering: path.join(home, ".kiro", "steering"),
+      rules: path.join(home, ".kiro", "steering"),
     },
     claude: {
       skills: path.join(home, ".claude", "skills"),
       agents: path.join(home, ".claude", "agents"),
+      rules: path.join(home, ".claude", "rules"),
     },
     opencode: {
       skills: path.join(home, ".config", "opencode", "skills"),

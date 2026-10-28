@@ -10,8 +10,8 @@ function fixture() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "tk-root-"));
   fs.mkdirSync(path.join(root, "skills", "demo"), { recursive: true });
   fs.writeFileSync(path.join(root, "skills", "demo", "SKILL.md"), "---\nname: demo\ndescription: skill de teste\n---\n# demo\n");
-  fs.mkdirSync(path.join(root, "steering"));
-  fs.writeFileSync(path.join(root, "steering", "global.md"), "# regras\n");
+  fs.mkdirSync(path.join(root, "rules"));
+  fs.writeFileSync(path.join(root, "rules", "global.md"), "# regras\n");
   process.env.TOOLKIT_HOME = fs.mkdtempSync(path.join(os.tmpdir(), "tk-home-"));
   return root;
 }

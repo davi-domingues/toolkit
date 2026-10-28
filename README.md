@@ -9,7 +9,8 @@ Meu toolkit pessoal de **skills, agents e steering** para agentes de IA (Kiro, C
 ```
 skills/<nome>/SKILL.md      skill (frontmatter name == pasta, description com gatilhos) + references/
 agents/<nome>.md            subagents standalone
-steering/<nome>.md          regras globais
+rules/<nome>.md             regras globais (instrucoes sempre ativas)
+prompts/                    prompts reutilizaveis (nao instalados; uso manual)
 scripts/toolkit.mjs         instalador/validador (Node, sem dependências)
 test/                       testes do instalador (node --test)
 ```
@@ -18,11 +19,13 @@ Skills atuais: `expo-expert`, `feature-builder`, `java-testing-patterns`.
 
 ## Destinos
 
-| Ferramenta | skills | agents | steering |
+| Ferramenta | skills | agents | rules |
 |---|---|---|---|
 | kiro | `~/.kiro/skills` | - | `~/.kiro/steering` |
-| claude | `~/.claude/skills` | `~/.claude/agents` | - |
+| claude | `~/.claude/skills` | `~/.claude/agents` | `~/.claude/rules` |
 | opencode | `~/.config/opencode/skills` | - | - |
+
+`rules/` é o nome neutro: cada ferramenta o chama de um jeito (steering no Kiro, rules no Claude Code). Codex, OpenCode, Copilot e Gemini leem um único arquivo (`AGENTS.md`/`GEMINI.md`), não uma pasta, por isso ainda não são alvo de rules.
 
 ## Uso
 
@@ -39,7 +42,7 @@ node scripts/toolkit.mjs validate                   # valida as skills
 
 Comportamento:
 - Skills (pastas) viram junction/symlink: editar no repo reflete na hora.
-- Arquivos (agents/steering) tentam symlink; sem permissão, caem para cópia.
+- Arquivos (arquivos de agents/rules) tentam symlink; sem permissão, caem para cópia.
 - Destino existente que não seja deste toolkit é **pulado**, nunca sobrescrito.
 - `uninstall` remove apenas links para este repo (ou arquivos idênticos aos daqui). Cópias de pastas feitas com `--copy` devem ser removidas manualmente.
 
