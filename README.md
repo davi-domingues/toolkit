@@ -1,58 +1,96 @@
+<div align="center">
+
 # toolkit
 
-Meu toolkit pessoal de **skills, agents e steering** para agentes de IA (Kiro, Claude Code, OpenCode). Uma fonte única versionada, instalada nas ferramentas por link, sem copiar à mão.
+**Minha caixa de ferramentas para agentes de IA.**
+Skills, agents, rules e prompts em um só lugar, versionados e instalados com um comando.
 
-> Este repo é independente do toolkit do GitLab corporativo: conteúdo e assets são mantidos separadamente.
+![node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)
+![deps](https://img.shields.io/badge/dependencias-0-brightgreen)
+![ferramentas](https://img.shields.io/badge/Kiro%20%7C%20Claude%20Code%20%7C%20OpenCode-suportados-blue)
 
-## Estrutura
+</div>
+
+---
+
+## Por que isso existe
+
+Cada agente de IA guarda suas instruções num lugar diferente: `~/.kiro/steering`, `~/.claude/rules`, `~/.config/opencode/commands`... Copiar arquivo à mão entre pastas dá drift em uma semana.
+
+O toolkit resolve isso com uma regra simples: **uma fonte única, vários destinos**. Você edita aqui, o instalador linka onde cada ferramenta espera. Mudou o arquivo no repo, mudou em todo lugar.
+
+## Início rápido
+
+Precisa só do Node 20+. Não há nada para instalar.
+
+```bash
+git clone https://github.com/davi-domingues/toolkit.git
+cd toolkit
+
+node scripts/toolkit.mjs list                  # o que existe e para onde vai
+node scripts/toolkit.mjs install --dry-run     # simula, não toca em nada
+node scripts/toolkit.mjs install               # instala em todas as ferramentas
+```
+
+## O que tem dentro
+
+| Pasta | O que é | Exemplos |
+|---|---|---|
+| `skills/` | Capacidades que o agente carrega sob demanda (`SKILL.md` + `references/`) | `expo-expert`, `feature-builder`, `java-testing-patterns` |
+| `agents/` | Subagents standalone, um `.md` por agent | (em breve) |
+| `rules/` | Regras globais sempre ativas | `global.md` |
+| `prompts/` | Prompts reutilizáveis, viram slash commands | `revisar-diff`, `orquestrar` |
+| `scripts/` | Instalador e validador, Node puro | `toolkit.mjs` |
+| `test/` | Testes do instalador (`node --test`) | |
 
 ```
-skills/<nome>/SKILL.md      skill (frontmatter name == pasta, description com gatilhos) + references/
-agents/<nome>.md            subagents standalone
-rules/<nome>.md             regras globais (instrucoes sempre ativas)
-prompts/                    prompts reutilizaveis (nao instalados; uso manual)
-scripts/toolkit.mjs         instalador/validador (Node, sem dependências)
-test/                       testes do instalador (node --test)
+toolkit/
+├── skills/<nome>/SKILL.md
+├── agents/<nome>.md
+├── rules/<nome>.md
+├── prompts/<nome>.md
+├── scripts/toolkit.mjs
+└── test/
 ```
 
-Skills atuais: `expo-expert`, `feature-builder`, `java-testing-patterns`.
-
-## Destinos
+## Para onde cada coisa vai
 
 | Ferramenta | skills | agents | rules | prompts |
 |---|---|---|---|---|
-| kiro | `~/.kiro/skills` | - | `~/.kiro/steering` | `~/.kiro/prompts` |
-| claude | `~/.claude/skills` | `~/.claude/agents` | `~/.claude/rules` | `~/.claude/commands` |
-| opencode | `~/.config/opencode/skills` | - | - | `~/.config/opencode/commands` |
+| **Kiro** | `~/.kiro/skills` | | `~/.kiro/steering` | `~/.kiro/prompts` |
+| **Claude Code** | `~/.claude/skills` | `~/.claude/agents` | `~/.claude/rules` | `~/.claude/commands` |
+| **OpenCode** | `~/.config/opencode/skills` | | | `~/.config/opencode/commands` |
 
-`rules/` é o nome neutro: cada ferramenta o chama de um jeito (steering no Kiro, rules no Claude Code). Codex, OpenCode, Copilot e Gemini leem um único arquivo (`AGENTS.md`/`GEMINI.md`) e o toolkit não gera arquivo concatenado, então não são alvo de rules.
+`rules/` é o nome neutro: o Kiro chama de *steering*, o Claude Code de *rules*. Ferramentas que só leem um `AGENTS.md` único ficam de fora de propósito, o toolkit não gera arquivos concatenados.
 
-## Uso
-
-Requer Node 20+.
+## Comandos
 
 ```bash
-node scripts/toolkit.mjs list                       # assets e destinos
-node scripts/toolkit.mjs install --dry-run          # simula
-node scripts/toolkit.mjs install                    # linka em todas as ferramentas
-node scripts/toolkit.mjs install --tools kiro       # só no Kiro
-node scripts/toolkit.mjs status                     # linkado / presente / ausente
-node scripts/toolkit.mjs uninstall                  # remove só o que o toolkit instalou
-node scripts/toolkit.mjs validate                   # valida as skills
+node scripts/toolkit.mjs list         # assets e destinos
+node scripts/toolkit.mjs status       # linkado, presente ou ausente, por ferramenta
+node scripts/toolkit.mjs install      # --tools kiro,claude  --copy  --dry-run
+node scripts/toolkit.mjs uninstall    # remove só o que o toolkit instalou
+node scripts/toolkit.mjs validate     # confere as skills
 ```
 
-Comportamento:
-- Skills (pastas) viram junction/symlink: editar no repo reflete na hora.
-- Arquivos (arquivos de agents/rules) tentam symlink; sem permissão, caem para cópia.
-- Destino existente que não seja deste toolkit é **pulado**, nunca sobrescrito.
-- `uninstall` remove apenas links para este repo (ou arquivos idênticos aos daqui). Cópias de pastas feitas com `--copy` devem ser removidas manualmente.
+Princípios do instalador:
 
-## Adicionar conteúdo
+- **Link por padrão.** Pastas viram junction/symlink. Arquivos tentam symlink e, sem permissão (Windows), caem para cópia.
+- **Nunca sobrescreve o que não é dele.** Destino existente e alheio é pulado com aviso.
+- **Idempotente.** Rodar duas vezes não muda nada.
+- **Desinstala com segurança.** Só remove links para este repo ou arquivos idênticos aos daqui. Pastas copiadas com `--copy` ficam por sua conta.
+- **Zero dependências.** Só a biblioteca padrão do Node.
 
-1. Crie `skills/<nome>/SKILL.md` com `name` igual à pasta e `description`.
-2. `npm run validate && npm test`.
-3. Registre no `CHANGELOG.md`, abra PR; o CI roda validação e testes.
+## Adicionando conteúdo
+
+1. Crie o arquivo na pasta certa. Para skills, `skills/<nome>/SKILL.md` com `name` igual ao nome da pasta e uma `description` que diga *quando* usar.
+2. `npm run validate && npm test`
+3. Anote no `CHANGELOG.md` e abra um PR. O CI roda validação e testes no Node 20 e 22.
 
 ## Versionamento
 
-SemVer em `package.json`, histórico no `CHANGELOG.md`, release por tag `vX.Y.Z`.
+[SemVer](https://semver.org/lang/pt-BR/) em `package.json`, histórico no [CHANGELOG](CHANGELOG.md), releases por tag `vX.Y.Z`.
+
+## Licença
+
+Uso pessoal. Fique à vontade para pegar a ideia e montar o seu.

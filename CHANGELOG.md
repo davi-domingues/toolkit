@@ -5,3 +5,4 @@
 - `java-testing-patterns` passa a ser versionada.
 - Instalador `scripts/toolkit.mjs` (install, uninstall, status, validate) para Kiro, Claude e OpenCode.
 - Testes com `node --test` e CI no GitHub Actions.
+- README reescrito e prompt orquestrar adicionado.
