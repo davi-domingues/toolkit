@@ -1,58 +1,97 @@
+<div align="center">
+
 # toolkit
 
-Meu toolkit pessoal de **skills, agents e steering** para agentes de IA (Kiro, Claude Code, OpenCode). Uma fonte única versionada, instalada nas ferramentas por link, sem copiar à mão.
+**My toolbox for AI coding agents.**
+Skills, agents, rules and prompts in one place, versioned and installed with a single command.
 
-> Este repo é independente do toolkit do GitLab corporativo: conteúdo e assets são mantidos separadamente.
+![node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)
+![deps](https://img.shields.io/badge/dependencies-0-brightgreen)
+![tools](https://img.shields.io/badge/Kiro%20%7C%20Claude%20Code%20%7C%20OpenCode-supported-blue)
+![license](https://img.shields.io/badge/license-MIT-blue)
 
-## Estrutura
+</div>
 
-```
-skills/<nome>/SKILL.md      skill (frontmatter name == pasta, description com gatilhos) + references/
-agents/<nome>.md            subagents standalone
-rules/<nome>.md             regras globais (instrucoes sempre ativas)
-prompts/                    prompts reutilizaveis (nao instalados; uso manual)
-scripts/toolkit.mjs         instalador/validador (Node, sem dependências)
-test/                       testes do instalador (node --test)
-```
+---
 
-Skills atuais: `expo-expert`, `feature-builder`, `java-testing-patterns`.
+## Why this exists
 
-## Destinos
+Every AI agent keeps its instructions somewhere different: `~/.kiro/steering`, `~/.claude/rules`, `~/.config/opencode/commands`... Copying files by hand between folders drifts within a week.
 
-| Ferramenta | skills | agents | rules | prompts |
-|---|---|---|---|---|
-| kiro | `~/.kiro/skills` | - | `~/.kiro/steering` | `~/.kiro/prompts` |
-| claude | `~/.claude/skills` | `~/.claude/agents` | `~/.claude/rules` | `~/.claude/commands` |
-| opencode | `~/.config/opencode/skills` | - | - | `~/.config/opencode/commands` |
+The toolkit fixes that with one simple rule: **a single source, many targets**. You edit here, and the installer links the files where each tool expects them. Change a file in the repo and it changes everywhere.
 
-`rules/` é o nome neutro: cada ferramenta o chama de um jeito (steering no Kiro, rules no Claude Code). Codex, OpenCode, Copilot e Gemini leem um único arquivo (`AGENTS.md`/`GEMINI.md`) e o toolkit não gera arquivo concatenado, então não são alvo de rules.
+## Quick start
 
-## Uso
-
-Requer Node 20+.
+All you need is Node 20+. There is nothing to install.
 
 ```bash
-node scripts/toolkit.mjs list                       # assets e destinos
-node scripts/toolkit.mjs install --dry-run          # simula
-node scripts/toolkit.mjs install                    # linka em todas as ferramentas
-node scripts/toolkit.mjs install --tools kiro       # só no Kiro
-node scripts/toolkit.mjs status                     # linkado / presente / ausente
-node scripts/toolkit.mjs uninstall                  # remove só o que o toolkit instalou
-node scripts/toolkit.mjs validate                   # valida as skills
+git clone https://github.com/davi-domingues/toolkit.git
+cd toolkit
+
+node scripts/toolkit.mjs list                  # what exists and where it goes
+node scripts/toolkit.mjs install --dry-run     # simulate, touches nothing
+node scripts/toolkit.mjs install               # install into every tool
 ```
 
-Comportamento:
-- Skills (pastas) viram junction/symlink: editar no repo reflete na hora.
-- Arquivos (arquivos de agents/rules) tentam symlink; sem permissão, caem para cópia.
-- Destino existente que não seja deste toolkit é **pulado**, nunca sobrescrito.
-- `uninstall` remove apenas links para este repo (ou arquivos idênticos aos daqui). Cópias de pastas feitas com `--copy` devem ser removidas manualmente.
+## What's inside
 
-## Adicionar conteúdo
+| Folder | What it is | Examples |
+|---|---|---|
+| `skills/` | Capabilities the agent loads on demand (`SKILL.md` + `references/`) | `expo-expert`, `feature-builder`, `java-testing-patterns` |
+| `agents/` | Standalone subagents, one `.md` per agent | (coming soon) |
+| `rules/` | Always-on global rules | `global.md` |
+| `prompts/` | Reusable prompts, exposed as slash commands | `revisar-diff`, `orquestrar` |
+| `scripts/` | Installer and validator, plain Node | `toolkit.mjs` |
+| `test/` | Installer tests (`node --test`) | |
 
-1. Crie `skills/<nome>/SKILL.md` com `name` igual à pasta e `description`.
-2. `npm run validate && npm test`.
-3. Registre no `CHANGELOG.md`, abra PR; o CI roda validação e testes.
+```
+toolkit/
+├── skills/<name>/SKILL.md
+├── agents/<name>.md
+├── rules/<name>.md
+├── prompts/<name>.md
+├── scripts/toolkit.mjs
+└── test/
+```
 
-## Versionamento
+## Where everything goes
 
-SemVer em `package.json`, histórico no `CHANGELOG.md`, release por tag `vX.Y.Z`.
+| Tool | skills | agents | rules | prompts |
+|---|---|---|---|---|
+| **Kiro** | `~/.kiro/skills` | | `~/.kiro/steering` | `~/.kiro/prompts` |
+| **Claude Code** | `~/.claude/skills` | `~/.claude/agents` | `~/.claude/rules` | `~/.claude/commands` |
+| **OpenCode** | `~/.config/opencode/skills` | | | `~/.config/opencode/commands` |
+
+`rules/` is the neutral name: Kiro calls it *steering*, Claude Code calls it *rules*. Tools that only read a single `AGENTS.md` are left out on purpose, the toolkit does not generate concatenated files.
+
+## Commands
+
+```bash
+node scripts/toolkit.mjs list         # assets and their targets
+node scripts/toolkit.mjs status       # linked, present or missing, per tool
+node scripts/toolkit.mjs install      # --tools kiro,claude  --copy  --dry-run
+node scripts/toolkit.mjs uninstall    # removes only what the toolkit installed
+node scripts/toolkit.mjs validate     # checks the skills
+```
+
+Installer principles:
+
+- **Links by default.** Folders become junctions/symlinks. Files try a symlink and fall back to a copy when permission is missing (Windows).
+- **Never overwrites what it doesn't own.** An existing foreign destination is skipped with a warning.
+- **Idempotent.** Running it twice changes nothing.
+- **Safe uninstall.** It only removes links to this repo or files identical to the ones here. Folders copied with `--copy` are left to you.
+- **Zero dependencies.** Node standard library only.
+
+## Adding content
+
+1. Create the file in the right folder. For skills, `skills/<name>/SKILL.md` with `name` equal to the folder name and a `description` that says *when* to use it.
+2. Run `npm run validate && npm test`.
+3. Note it in `CHANGELOG.md` and open a PR. CI runs validation and tests on Node 20 and 22.
+
+## Versioning
+
+[SemVer](https://semver.org) in `package.json`, history in the [CHANGELOG](CHANGELOG.md), releases through `vX.Y.Z` tags.
+
+## License
+
+[MIT](LICENSE) © 2026 Davi Domingues
