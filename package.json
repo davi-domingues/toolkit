@@ -1,0 +1,14 @@
+{
+  "name": "toolkit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Toolkit pessoal de skills, agents e steering para agentes de IA",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "install:tools": "node scripts/toolkit.mjs install",
+    "status": "node scripts/toolkit.mjs status",
+    "validate": "node scripts/toolkit.mjs validate",
+    "test": "node --test"
+  }
+}
