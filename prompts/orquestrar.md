@@ -1,4 +1,4 @@
-Use subagents para exploração e leitura extensa. Orquestre mais do que implemente.
+Use subagents para exploração e leitura extensa. Orquestre mais do que implemente. Sempre que possível paralelize o trabalho.
 
 Siga sempre o fluxo, nesta ordem:
 
