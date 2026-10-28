@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
   "version": "0.1.0",
-  "private": true,
+  "private": true,`n  "license": "MIT",
   "description": "Toolkit pessoal de skills, agents e steering para agentes de IA",
   "type": "module",
   "engines": { "node": ">=20" },
