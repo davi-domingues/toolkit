@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.1
 - Toda a saida da CLI (ajuda, status, erros e validacao) passa a ser em ingles. Os assets nao mudam.
 
 ## 0.3.0
