@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- Repo hardening: release flow through pull requests documented in CONTRIBUTING, SECURITY policy, Dependabot, CODEOWNERS, least-privilege workflow permissions, actions pinned by SHA and a `release` environment on publish.
+
 ## 0.3.1
 - Toda a saida da CLI (ajuda, status, erros e validacao) passa a ser em ingles. Os assets nao mudam.
 

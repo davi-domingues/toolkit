@@ -122,16 +122,7 @@ Ideas and next steps live in [ROADMAP.md](ROADMAP.md).
 
 ## Versioning
 
-[SemVer](https://semver.org) in `package.json`, history in the [CHANGELOG](CHANGELOG.md).
-
-To release, from an up-to-date `main`:
-
-```bash
-npm version minor            # or patch/major: bumps package.json, commits and tags vX.Y.Z
-git push --follow-tags
-```
-
-The `publish` workflow runs on the tag: it checks that the tag matches `package.json`, runs validate and tests, publishes to GitHub Packages with the workflow's `GITHUB_TOKEN` and creates a GitHub Release with generated notes.
+[SemVer](https://semver.org) in `package.json`, history in the [CHANGELOG](CHANGELOG.md). The pull request and release process is in [CONTRIBUTING](CONTRIBUTING.md).
 
 ## License
 
