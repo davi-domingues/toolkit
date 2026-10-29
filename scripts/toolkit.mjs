@@ -1,9 +1,8 @@
-#!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
 import { listAssets, resolveTargets, validateSkills, ROOT } from "./lib.mjs";
 
-const USAGE = `Uso: node scripts/toolkit.mjs <comando> [opcoes]
+const USAGE = `Uso: toolkit <comando> [opcoes]
 
 Comandos:
   install     Instala skills/agents/rules/prompts nas ferramentas (padrao: link)
@@ -98,7 +97,8 @@ export function run(argv, root = ROOT) {
   const out = [];
   if (opts.command === "validate") {
     const problems = validateSkills(root);
-    return problems.length ? problems.map((p) => `ERRO ${p}`) : ["OK: todas as skills validas"];
+    if (problems.length) throw new Error(problems.map((p) => `ERRO ${p}`).join("\n"));
+    return ["OK: todas as skills validas"];
   }
   if (opts.command === "list") {
     const targets = resolveTargets();
@@ -127,13 +127,4 @@ export function run(argv, root = ROOT) {
     }
   }
   return out;
-}
-
-if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(import.meta.filename)) {
-  try {
-    console.log(run(process.argv.slice(2)).join("\n"));
-  } catch (e) {
-    console.error(e.message);
-    process.exit(1);
-  }
 }

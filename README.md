@@ -22,15 +22,36 @@ The toolkit fixes that with one simple rule: **a single source, many targets**. 
 
 ## Quick start
 
-All you need is Node 20+. There is nothing to install.
+Requires Node 20+. The package is published to GitHub Packages, which requires a token even to install public packages.
+
+1. Create a [personal access token (classic)](https://github.com/settings/tokens/new?scopes=read:packages) with only the `read:packages` scope. GitHub Packages does not accept fine-grained tokens.
+2. Point the scope at GitHub Packages and save the token in your user `~/.npmrc` (never in the repo):
+
+   ```bash
+   npm config set @davi-domingues:registry https://npm.pkg.github.com
+   npm config set //npm.pkg.github.com/:_authToken <TOKEN>
+   ```
+
+3. Install and run:
+
+   ```bash
+   npm i -g @davi-domingues/toolkit
+
+   toolkit list                  # what exists and where it goes
+   toolkit install --dry-run     # simulate, touches nothing
+   toolkit install               # install into every tool
+   ```
+
+Links point into the installed package, so `npm i -g @davi-domingues/toolkit@latest` updates every tool at once. Run `toolkit install` again to pick up new assets, and `toolkit uninstall` before `npm uninstall -g` so no broken links are left behind.
+
+### From a clone
+
+To work on the toolkit itself, clone it and use the same commands through `node bin/toolkit.js`:
 
 ```bash
 git clone https://github.com/davi-domingues/toolkit.git
 cd toolkit
-
-node scripts/toolkit.mjs list                  # what exists and where it goes
-node scripts/toolkit.mjs install --dry-run     # simulate, touches nothing
-node scripts/toolkit.mjs install               # install into every tool
+node bin/toolkit.js install
 ```
 
 ## What's inside
@@ -41,6 +62,7 @@ node scripts/toolkit.mjs install               # install into every tool
 | `agents/` | Standalone subagents, one `.md` per agent | (coming soon) |
 | `rules/` | Always-on global rules | `global.md` |
 | `prompts/` | Reusable prompts, exposed as slash commands | `revisar-diff`, `orquestrar` |
+| `bin/` | CLI entry point (`toolkit`) | `toolkit.js` |
 | `scripts/` | Installer and validator, plain Node | `toolkit.mjs` |
 | `test/` | Installer tests (`node --test`) | |
 
@@ -50,6 +72,7 @@ toolkit/
 ├── agents/<name>.md
 ├── rules/<name>.md
 ├── prompts/<name>.md
+├── bin/toolkit.js
 ├── scripts/toolkit.mjs
 └── test/
 ```
@@ -67,11 +90,11 @@ toolkit/
 ## Commands
 
 ```bash
-node scripts/toolkit.mjs list         # assets and their targets
-node scripts/toolkit.mjs status       # linked, present or missing, per tool
-node scripts/toolkit.mjs install      # --tools kiro,claude  --copy  --dry-run
-node scripts/toolkit.mjs uninstall    # removes only what the toolkit installed
-node scripts/toolkit.mjs validate     # checks the skills
+toolkit list         # assets and their targets
+toolkit status       # linked, present or missing, per tool
+toolkit install      # --tools kiro,claude  --copy  --dry-run
+toolkit uninstall    # removes only what the toolkit installed
+toolkit validate     # checks the skills
 ```
 
 Installer principles:
@@ -94,7 +117,16 @@ Ideas and next steps live in [ROADMAP.md](ROADMAP.md).
 
 ## Versioning
 
-[SemVer](https://semver.org) in `package.json`, history in the [CHANGELOG](CHANGELOG.md), releases through `vX.Y.Z` tags.
+[SemVer](https://semver.org) in `package.json`, history in the [CHANGELOG](CHANGELOG.md).
+
+To release, from an up-to-date `main`:
+
+```bash
+npm version minor            # or patch/major: bumps package.json, commits and tags vX.Y.Z
+git push --follow-tags
+```
+
+The `publish` workflow runs on the tag: it checks that the tag matches `package.json`, runs validate and tests, publishes to GitHub Packages with the workflow's `GITHUB_TOKEN` and creates a GitHub Release with generated notes.
 
 ## License
 

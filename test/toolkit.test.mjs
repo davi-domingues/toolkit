@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { parseFrontmatter, validateSkills, listAssets } from "../scripts/lib.mjs";
 import { run, parseArgs } from "../scripts/toolkit.mjs";
 
@@ -72,4 +74,22 @@ test("dry-run nao altera o disco", () => {
 test("repo real tem skills validas", () => {
   assert.equal(listAssets("skills").length > 0, true);
   assert.deepEqual(validateSkills(), []);
+});
+
+test("validate falha quando ha skill invalida", () => {
+  const root = fixture();
+  fs.writeFileSync(path.join(root, "skills", "demo", "SKILL.md"), "---\nname: outro\n---\n");
+  assert.throws(() => run(["validate"], root), /ERRO demo/);
+});
+
+test("bin le o conteudo do diretorio do pacote, nao do cwd", () => {
+  const bin = fileURLToPath(new URL("../bin/toolkit.js", import.meta.url));
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "tk-cwd-"));
+  const ok = spawnSync(process.execPath, [bin, "list"], { cwd, encoding: "utf8" });
+  assert.equal(ok.status, 0, ok.stderr);
+  assert.ok(ok.stdout.includes("  - java-testing-patterns"));
+
+  const bad = spawnSync(process.execPath, [bin, "nada"], { cwd, encoding: "utf8" });
+  assert.equal(bad.status, 1);
+  assert.match(bad.stderr, /Uso: toolkit/);
 });
