@@ -86,3 +86,20 @@ export function validateSkills(root = ROOT) {
   }
   return problems;
 }
+
+/** Prefix that identifies every asset as part of this toolkit. */
+export const PREFIX = "dodtk-";
+
+/**
+ * Checks that every asset name starts with {@link PREFIX}.
+ *
+ * @param {string} [root] toolkit root
+ * @returns {string[]} human readable problems, empty when valid
+ */
+export function validatePrefix(root = ROOT) {
+  return ["skills", "agents", "rules", "prompts"].flatMap((kind) =>
+    listAssets(kind, root)
+      .filter((a) => !a.name.startsWith(PREFIX))
+      .map((a) => `${kind}/${a.name}: falta o prefixo '${PREFIX}'`),
+  );
+}

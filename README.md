@@ -37,12 +37,16 @@ Requires Node 20+. The package is published to GitHub Packages, which requires a
    ```bash
    npm i -g @davi-domingues/toolkit
 
-   toolkit list                  # what exists and where it goes
-   toolkit install --dry-run     # simulate, touches nothing
-   toolkit install               # install into every tool
+   dod-toolkit list                  # what exists and where it goes
+   dod-toolkit install --dry-run     # simulate, touches nothing
+   dod-toolkit install               # install into every tool
    ```
 
-Links point into the installed package, so `npm i -g @davi-domingues/toolkit@latest` updates every tool at once. Run `toolkit install` again to pick up new assets, and `toolkit uninstall` before `npm uninstall -g` so no broken links are left behind.
+Links point into the installed package, so `npm i -g @davi-domingues/toolkit@latest` updates every tool at once. Run `dod-toolkit install` again to pick up new assets, and `dod-toolkit uninstall` before `npm uninstall -g` so no broken links are left behind.
+
+The command is `dod-toolkit` and every asset is prefixed with `dodtk-`, so this toolkit can live next to other toolkits that install a `toolkit` command or same-named skills.
+
+**Upgrading from 0.2.0:** that version used the `toolkit` command and unprefixed names. Run `toolkit uninstall` with 0.2.0 first, then upgrade and run `dod-toolkit install`.
 
 ### From a clone
 
@@ -58,11 +62,11 @@ node bin/toolkit.js install
 
 | Folder | What it is | Examples |
 |---|---|---|
-| `skills/` | Capabilities the agent loads on demand (`SKILL.md` + `references/`) | `expo-expert`, `feature-builder`, `java-testing-patterns` |
+| `skills/` | Capabilities the agent loads on demand (`SKILL.md` + `references/`) | `dodtk-expo-expert`, `dodtk-feature-builder`, `dodtk-java-testing-patterns` |
 | `agents/` | Standalone subagents, one `.md` per agent | (coming soon) |
-| `rules/` | Always-on global rules | `global.md` |
-| `prompts/` | Reusable prompts, exposed as slash commands | `revisar-diff`, `orquestrar` |
-| `bin/` | CLI entry point (`toolkit`) | `toolkit.js` |
+| `rules/` | Always-on global rules | `dodtk-global.md` |
+| `prompts/` | Reusable prompts, exposed as slash commands | `dodtk-revisar-diff`, `dodtk-orquestrar` |
+| `bin/` | CLI entry point (`dod-toolkit`) | `toolkit.js` |
 | `scripts/` | Installer and validator, plain Node | `toolkit.mjs` |
 | `test/` | Installer tests (`node --test`) | |
 
@@ -90,11 +94,12 @@ toolkit/
 ## Commands
 
 ```bash
-toolkit list         # assets and their targets
-toolkit status       # linked, present or missing, per tool
-toolkit install      # --tools kiro,claude  --copy  --dry-run
-toolkit uninstall    # removes only what the toolkit installed
-toolkit validate     # checks the skills
+dod-toolkit list         # assets and their targets
+dod-toolkit status       # linked, present or missing, per tool
+dod-toolkit install      # --tools kiro,claude  --copy  --dry-run
+dod-toolkit uninstall    # removes only what the toolkit installed
+dod-toolkit validate     # checks the skills
+dod-toolkit --help       # usage, version, author and license
 ```
 
 Installer principles:
@@ -107,7 +112,7 @@ Installer principles:
 
 ## Adding content
 
-1. Create the file in the right folder. For skills, `skills/<name>/SKILL.md` with `name` equal to the folder name and a `description` that says *when* to use it.
+1. Create the file in the right folder, with a name starting with `dodtk-`. For skills, `skills/dodtk-<name>/SKILL.md` with `name` equal to the folder name and a `description` that says *when* to use it. `validate` fails on any asset without the prefix.
 2. Run `npm run validate && npm test`.
 3. Note it in `CHANGELOG.md` and open a PR. CI runs validation and tests on Node 20 and 22.
 

@@ -1,5 +1,5 @@
 ---
-name: java-testing-patterns
+name: dodtk-java-testing-patterns
 description: The definitive testing standard for this project. Trigger this skill EVERY TIME the user asks to write, create, edit, fix, or organize unit tests. Whether the request is 'write a test', 'create tests', 'fix test', or 'unit test this class', it is required for ALL test creation and modification in the project. It guarantees that new unit tests follow the project's established mock structures, assertions, and layer-specific rules. It never modifies production code, project configurations, or any non-test files.
 ---
 

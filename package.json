@@ -2,10 +2,18 @@
   "name": "@davi-domingues/toolkit",
   "version": "0.2.0",
   "license": "MIT",
+  "author": {
+    "name": "Davi Domingues",
+    "url": "https://github.com/davi-domingues"
+  },
+  "homepage": "https://github.com/davi-domingues/toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/davi-domingues/toolkit/issues"
+  },
   "description": "Personal toolkit of skills, agents, rules and prompts for AI coding agents",
   "type": "module",
   "bin": {
-    "toolkit": "bin/toolkit.js"
+    "dod-toolkit": "bin/toolkit.js"
   },
   "files": [
     "bin",
