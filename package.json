@@ -1,6 +1,6 @@
 {
   "name": "@davi-domingues/toolkit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "description": "Personal toolkit of skills, agents, rules and prompts for AI coding agents",
   "type": "module",
@@ -15,7 +15,9 @@
     "rules",
     "prompts"
   ],
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/davi-domingues/toolkit.git"

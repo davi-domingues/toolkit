@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 - Pacote `@davi-domingues/toolkit` com o comando `toolkit` (`bin/toolkit.js`), publicado no GitHub Packages.
 - Workflow `publish` em tag `vX.Y.Z`: confere tag x versao, roda validate e testes, publica com `GITHUB_TOKEN` e cria o GitHub Release.
 - `validate` sai com codigo 1 quando ha skill invalida.
