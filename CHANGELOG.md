@@ -1,5 +1,9 @@
 # Changelog
 
+## Nao lancado
+- Skill `dodtk-job-application` e prompt `/dodtk-candidatura`: selecao de habilidades, apresentacao e pretensao salarial para qualquer vaga, com estilo de escrita adaptavel, pesquisa de mercado e templates em `templates/`. Perfil, estilo e cenario salarial ficam fora do repo, em `~/.dod-toolkit/job-application/` (ou `DODTK_JOB_HOME`).
+- Testes que impedem dado pessoal (valor em reais, e-mail) e links quebrados na skill.
+
 ## 0.3.0
 - **Quebra:** o comando passa de `toolkit` para `dod-toolkit`, para conviver com outros toolkits.
 - **Quebra:** todos os assets ganham o prefixo `dodtk-` (ex.: `dodtk-java-testing-patterns`, `/dodtk-revisar-diff`); `validate` falha em asset sem o prefixo. Quem tem a 0.2.0 deve rodar `toolkit uninstall` antes de atualizar.

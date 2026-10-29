@@ -62,10 +62,10 @@ node bin/toolkit.js install
 
 | Folder | What it is | Examples |
 |---|---|---|
-| `skills/` | Capabilities the agent loads on demand (`SKILL.md` + `references/`) | `dodtk-expo-expert`, `dodtk-feature-builder`, `dodtk-java-testing-patterns` |
+| `skills/` | Capabilities the agent loads on demand (`SKILL.md` + `references/`) | `dodtk-expo-expert`, `dodtk-feature-builder`, `dodtk-java-testing-patterns`, `dodtk-job-application` |
 | `agents/` | Standalone subagents, one `.md` per agent | (coming soon) |
 | `rules/` | Always-on global rules | `dodtk-global.md` |
-| `prompts/` | Reusable prompts, exposed as slash commands | `dodtk-revisar-diff`, `dodtk-orquestrar` |
+| `prompts/` | Reusable prompts, exposed as slash commands | `dodtk-revisar-diff`, `dodtk-orquestrar`, `dodtk-candidatura` |
 | `bin/` | CLI entry point (`dod-toolkit`) | `toolkit.js` |
 | `scripts/` | Installer and validator, plain Node | `toolkit.mjs` |
 | `test/` | Installer tests (`node --test`) | |
