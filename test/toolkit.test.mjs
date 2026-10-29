@@ -34,7 +34,7 @@ test("validateSkills acusa name divergente e description ausente", () => {
 });
 
 test("parseArgs rejeita opcao desconhecida", () => {
-  assert.throws(() => parseArgs(["install", "--x"]), /desconhecida/);
+  assert.throws(() => parseArgs(["install", "--x"]), /Unknown option/);
 });
 
 test("install e uninstall sao idempotentes e nao tocam em arquivos alheios", () => {
@@ -44,13 +44,13 @@ test("install e uninstall sao idempotentes e nao tocam em arquivos alheios", () 
   fs.mkdirSync(foreign, { recursive: true });
 
   const first = run(["install", "--tools", "kiro"], root);
-  assert.ok(first.some((l) => l.includes("kiro/skills/demo: PULADO")));
+  assert.ok(first.some((l) => l.includes("kiro/skills/demo: SKIPPED")));
   assert.ok(fs.existsSync(path.join(home, ".kiro", "steering", "global.md")));
   assert.ok(fs.existsSync(path.join(home, ".kiro", "prompts", "p.md")));
 
   fs.rmSync(foreign, { recursive: true });
   run(["install", "--tools", "kiro"], root);
-  assert.ok(run(["install", "--tools", "kiro"], root).every((l) => l.includes("ja instalado")));
+  assert.ok(run(["install", "--tools", "kiro"], root).every((l) => l.includes("already installed")));
 
   run(["uninstall", "--tools", "kiro"], root);
   assert.equal(fs.existsSync(foreign), false);
@@ -75,8 +75,8 @@ test("help identifica autor, licenca e repo; version mostra pacote e versao", ()
   const pkg = JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8"));
   for (const argv of [["--help"], ["-h"], ["help"], ["install", "--help"]]) {
     const [text] = run(argv);
-    assert.match(text, /Copyright \(c\) 2026 Davi Domingues\. Licenca MIT\./);
-    assert.ok(text.includes(`${pkg.name} ${pkg.version}, de Davi Domingues`));
+    assert.match(text, /Copyright \(c\) 2026 Davi Domingues\. MIT License\./);
+    assert.ok(text.includes(`${pkg.name} ${pkg.version}, by Davi Domingues`));
     assert.ok(text.includes("https://github.com/davi-domingues/toolkit"));
   }
   assert.deepEqual(run(["--version"]), [`${pkg.name} ${pkg.version}`]);
@@ -91,13 +91,13 @@ test("repo real tem skills validas", () => {
 test("validatePrefix acusa asset sem o prefixo dodtk-", () => {
   const root = fixture();
   fs.renameSync(path.join(root, "rules", "global.md"), path.join(root, "rules", "dodtk-global.md"));
-  assert.deepEqual(validatePrefix(root), ["skills/demo: falta o prefixo 'dodtk-'", "prompts/p.md: falta o prefixo 'dodtk-'"]);
+  assert.deepEqual(validatePrefix(root), ["skills/demo: missing the prefix 'dodtk-'", "prompts/p.md: missing the prefix 'dodtk-'"]);
 });
 
 test("validate falha quando ha skill invalida", () => {
   const root = fixture();
   fs.writeFileSync(path.join(root, "skills", "demo", "SKILL.md"), "---\nname: outro\n---\n");
-  assert.throws(() => run(["validate"], root), /ERRO demo/);
+  assert.throws(() => run(["validate"], root), /ERROR demo/);
 });
 
 test("bin le o conteudo do diretorio do pacote, nao do cwd", () => {
@@ -109,5 +109,5 @@ test("bin le o conteudo do diretorio do pacote, nao do cwd", () => {
 
   const bad = spawnSync(process.execPath, [bin, "nada"], { cwd, encoding: "utf8" });
   assert.equal(bad.status, 1);
-  assert.match(bad.stderr, /Uso: dod-toolkit/);
+  assert.match(bad.stderr, /Usage: dod-toolkit/);
 });
