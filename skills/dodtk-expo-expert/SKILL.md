@@ -1,5 +1,5 @@
 ---
-name: expo-expert
+name: dodtk-expo-expert
 description: Expert-level guidance for Expo projects — setup, configuration, file-based routing, theming, navigation, components, assets, and coding standards. Use this skill whenever the user mentions Expo, React Native, cross-platform mobile apps, `expo-router`, `create-expo-app`, SDK version, native tabs, reanimated, `expo-image`, `app.json`, `expo-*` packages, or any Expo-related development task. Triggers on "create an Expo app", "configure Expo", "Expo Router", "native tabs", "Expo theme", "light/dark mode", "Expo project structure", "Expo SDK", "Expo web", or any mobile/native work that might use Expo. Do NOT use for bare React Native CLI projects, pure web-only work, or non-Expo React Native tasks.
 ---
 # Expo Expert

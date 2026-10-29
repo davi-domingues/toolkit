@@ -1,21 +1,39 @@
 import fs from "node:fs";
 import path from "node:path";
-import { listAssets, resolveTargets, validateSkills, ROOT } from "./lib.mjs";
+import { listAssets, resolveTargets, validateSkills, validatePrefix, ROOT } from "./lib.mjs";
 
-const USAGE = `Uso: toolkit <comando> [opcoes]
+const PKG = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+
+const USAGE = `Uso: dod-toolkit <comando> [opcoes]
 
 Comandos:
   install     Instala skills/agents/rules/prompts nas ferramentas (padrao: link)
   uninstall   Remove somente o que este toolkit instalou
   status      Mostra o estado de cada asset em cada ferramenta
   list        Lista os assets do toolkit e onde cada tipo e instalado
-  validate    Valida as skills do repo
+  validate    Valida as skills e o prefixo dodtk- dos assets
 
 Opcoes:
   --tools kiro,claude,opencode   Ferramentas alvo (padrao: todas)
   --copy                         Copia em vez de linkar
   --dry-run                      Mostra o que seria feito
+  -h, --help                     Mostra esta ajuda
+  -v, --version                  Mostra a versao
 `;
+
+/**
+ * Builds the help text, identifying the package, its author and license.
+ *
+ * @returns {string} help text
+ */
+export function help() {
+  return `${PKG.name} ${PKG.version}, de ${PKG.author.name}
+${PKG.description}
+
+${USAGE}
+Copyright (c) 2026 ${PKG.author.name}. Licenca ${PKG.license}.
+${PKG.homepage}`;
+}
 
 /**
  * @param {string[]} argv raw arguments
@@ -93,10 +111,12 @@ function plan(opts, root) {
  * @returns {string[]} output lines
  */
 export function run(argv, root = ROOT) {
+  if (argv.some((a) => a === "-h" || a === "--help") || argv[0] === "help") return [help()];
+  if (argv[0] === "-v" || argv[0] === "--version") return [`${PKG.name} ${PKG.version}`];
   const opts = parseArgs(argv);
   const out = [];
   if (opts.command === "validate") {
-    const problems = validateSkills(root);
+    const problems = [...validateSkills(root), ...validatePrefix(root)];
     if (problems.length) throw new Error(problems.map((p) => `ERRO ${p}`).join("\n"));
     return ["OK: todas as skills validas"];
   }
@@ -110,7 +130,7 @@ export function run(argv, root = ROOT) {
     }
     return out;
   }
-  if (!["install", "uninstall", "status"].includes(opts.command)) throw new Error(USAGE);
+  if (!["install", "uninstall", "status"].includes(opts.command)) throw new Error(help());
 
   for (const { tool, kind, asset, dest } of plan(opts, root)) {
     const label = `${tool}/${kind}/${asset.name}`;

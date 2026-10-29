@@ -1,5 +1,5 @@
 ---
-name: feature-builder
+name: dodtk-feature-builder
 description: "Implementation orchestrator for features that have already been broken down into tasks. Use this skill whenever the user asks to implement, build, or develop a feature using sub-agents — phrases like 'implemente', 'implement with sub-agents', 'desenvolva essa feature', 'execute the tasks for X', 'build feature X', 'put it into code', 'develop the tasks', 'orchestrate implementation', or any request to turn task specifications into working code. This skill expects task files to already exist — it does NOT do specification or planning. It discovers task files, analyzes dependencies, spawns developer + verifier sub-agents in dependency-aware waves, collects results, produces an implementation report, and optionally handles git commits and pull requests. It does NOT replace build-lite or build — it complements them for the specific case where task files are ready."
 ---
 

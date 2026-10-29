@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { parseFrontmatter, validateSkills, listAssets } from "../scripts/lib.mjs";
+import { parseFrontmatter, validateSkills, validatePrefix, listAssets } from "../scripts/lib.mjs";
 import { run, parseArgs } from "../scripts/toolkit.mjs";
 
 function fixture() {
@@ -71,9 +71,27 @@ test("dry-run nao altera o disco", () => {
   assert.equal(fs.existsSync(path.join(process.env.TOOLKIT_HOME, ".kiro")), false);
 });
 
+test("help identifica autor, licenca e repo; version mostra pacote e versao", () => {
+  const pkg = JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  for (const argv of [["--help"], ["-h"], ["help"], ["install", "--help"]]) {
+    const [text] = run(argv);
+    assert.match(text, /Copyright \(c\) 2026 Davi Domingues\. Licenca MIT\./);
+    assert.ok(text.includes(`${pkg.name} ${pkg.version}, de Davi Domingues`));
+    assert.ok(text.includes("https://github.com/davi-domingues/toolkit"));
+  }
+  assert.deepEqual(run(["--version"]), [`${pkg.name} ${pkg.version}`]);
+});
+
 test("repo real tem skills validas", () => {
   assert.equal(listAssets("skills").length > 0, true);
   assert.deepEqual(validateSkills(), []);
+  assert.deepEqual(validatePrefix(), []);
+});
+
+test("validatePrefix acusa asset sem o prefixo dodtk-", () => {
+  const root = fixture();
+  fs.renameSync(path.join(root, "rules", "global.md"), path.join(root, "rules", "dodtk-global.md"));
+  assert.deepEqual(validatePrefix(root), ["skills/demo: falta o prefixo 'dodtk-'", "prompts/p.md: falta o prefixo 'dodtk-'"]);
 });
 
 test("validate falha quando ha skill invalida", () => {
@@ -87,9 +105,9 @@ test("bin le o conteudo do diretorio do pacote, nao do cwd", () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "tk-cwd-"));
   const ok = spawnSync(process.execPath, [bin, "list"], { cwd, encoding: "utf8" });
   assert.equal(ok.status, 0, ok.stderr);
-  assert.ok(ok.stdout.includes("  - java-testing-patterns"));
+  assert.ok(ok.stdout.includes("  - dodtk-java-testing-patterns"));
 
   const bad = spawnSync(process.execPath, [bin, "nada"], { cwd, encoding: "utf8" });
   assert.equal(bad.status, 1);
-  assert.match(bad.stderr, /Uso: toolkit/);
+  assert.match(bad.stderr, /Uso: dod-toolkit/);
 });
