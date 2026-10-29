@@ -77,12 +77,12 @@ export function validateSkills(root = ROOT) {
   for (const skill of listAssets("skills", root)) {
     const file = path.join(skill.path, "SKILL.md");
     if (!fs.existsSync(file)) {
-      problems.push(`${skill.name}: SKILL.md ausente`);
+      problems.push(`${skill.name}: SKILL.md missing`);
       continue;
     }
     const meta = parseFrontmatter(fs.readFileSync(file, "utf8"));
-    if (meta.name !== skill.name) problems.push(`${skill.name}: 'name' (${meta.name ?? "vazio"}) difere da pasta`);
-    if (!meta.description) problems.push(`${skill.name}: 'description' ausente`);
+    if (meta.name !== skill.name) problems.push(`${skill.name}: 'name' (${meta.name ?? "empty"}) differs from the folder name`);
+    if (!meta.description) problems.push(`${skill.name}: 'description' missing`);
   }
   return problems;
 }
@@ -100,6 +100,6 @@ export function validatePrefix(root = ROOT) {
   return ["skills", "agents", "rules", "prompts"].flatMap((kind) =>
     listAssets(kind, root)
       .filter((a) => !a.name.startsWith(PREFIX))
-      .map((a) => `${kind}/${a.name}: falta o prefixo '${PREFIX}'`),
+      .map((a) => `${kind}/${a.name}: missing the prefix '${PREFIX}'`),
   );
 }

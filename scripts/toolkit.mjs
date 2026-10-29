@@ -4,21 +4,21 @@ import { listAssets, resolveTargets, validateSkills, validatePrefix, ROOT } from
 
 const PKG = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
 
-const USAGE = `Uso: dod-toolkit <comando> [opcoes]
+const USAGE = `Usage: dod-toolkit <command> [options]
 
-Comandos:
-  install     Instala skills/agents/rules/prompts nas ferramentas (padrao: link)
-  uninstall   Remove somente o que este toolkit instalou
-  status      Mostra o estado de cada asset em cada ferramenta
-  list        Lista os assets do toolkit e onde cada tipo e instalado
-  validate    Valida as skills e o prefixo dodtk- dos assets
+Commands:
+  install     Installs skills/agents/rules/prompts into the tools (default: link)
+  uninstall   Removes only what this toolkit installed
+  status      Shows the state of each asset in each tool
+  list        Lists the toolkit assets and where each kind is installed
+  validate    Validates the skills and the dodtk- asset prefix
 
-Opcoes:
-  --tools kiro,claude,opencode   Ferramentas alvo (padrao: todas)
-  --copy                         Copia em vez de linkar
-  --dry-run                      Mostra o que seria feito
-  -h, --help                     Mostra esta ajuda
-  -v, --version                  Mostra a versao
+Options:
+  --tools kiro,claude,opencode   Target tools (default: all)
+  --copy                         Copies instead of linking
+  --dry-run                      Shows what would be done
+  -h, --help                     Shows this help
+  -v, --version                  Shows the version
 `;
 
 /**
@@ -27,11 +27,11 @@ Opcoes:
  * @returns {string} help text
  */
 export function help() {
-  return `${PKG.name} ${PKG.version}, de ${PKG.author.name}
+  return `${PKG.name} ${PKG.version}, by ${PKG.author.name}
 ${PKG.description}
 
 ${USAGE}
-Copyright (c) 2026 ${PKG.author.name}. Licenca ${PKG.license}.
+Copyright (c) 2026 ${PKG.author.name}. ${PKG.license} License.
 ${PKG.homepage}`;
 }
 
@@ -45,7 +45,7 @@ export function parseArgs(argv) {
     if (argv[i] === "--copy") opts.copy = true;
     else if (argv[i] === "--dry-run") opts.dryRun = true;
     else if (argv[i] === "--tools") opts.tools = (argv[++i] ?? "").split(",").filter(Boolean);
-    else throw new Error(`Opcao desconhecida: ${argv[i]}`);
+    else throw new Error(`Unknown option: ${argv[i]}`);
   }
   return opts;
 }
@@ -80,18 +80,18 @@ function place(asset, dest, copy) {
       fs.symlinkSync(asset.path, dest, asset.isDir ? "junction" : "file");
       return "link";
     } catch {
-      // sem permissao de symlink (ex.: Windows para arquivos): cai para copia
+      // no symlink permission (e.g. Windows for files): fall back to copy
     }
   }
   fs.cpSync(asset.path, dest, { recursive: true });
-  return "copia";
+  return "copy";
 }
 
 function plan(opts, root) {
   const targets = resolveTargets();
   const chosen = opts.tools ?? Object.keys(targets);
   const unknown = chosen.filter((t) => !targets[t]);
-  if (unknown.length) throw new Error(`Ferramenta desconhecida: ${unknown.join(", ")}`);
+  if (unknown.length) throw new Error(`Unknown tool: ${unknown.join(", ")}`);
   const items = [];
   for (const tool of chosen) {
     for (const [kind, dir] of Object.entries(targets[tool])) {
@@ -117,15 +117,15 @@ export function run(argv, root = ROOT) {
   const out = [];
   if (opts.command === "validate") {
     const problems = [...validateSkills(root), ...validatePrefix(root)];
-    if (problems.length) throw new Error(problems.map((p) => `ERRO ${p}`).join("\n"));
-    return ["OK: todas as skills validas"];
+    if (problems.length) throw new Error(problems.map((p) => `ERROR ${p}`).join("\n"));
+    return ["OK: all skills are valid"];
   }
   if (opts.command === "list") {
     const targets = resolveTargets();
     for (const kind of ["skills", "agents", "rules", "prompts"]) {
       const names = listAssets(kind, root).map((a) => a.name);
       const where = Object.entries(targets).filter(([, t]) => t[kind]).map(([tool, t]) => `${tool}:${t[kind]}`);
-      out.push(`${kind} (${names.length}) -> ${where.join(" | ") || "sem destino"}`);
+      out.push(`${kind} (${names.length}) -> ${where.join(" | ") || "no target"}`);
       names.forEach((n) => out.push(`  - ${n}`));
     }
     return out;
@@ -136,14 +136,14 @@ export function run(argv, root = ROOT) {
     const label = `${tool}/${kind}/${asset.name}`;
     const owned = isOwned(dest, asset);
     if (opts.command === "status") {
-      out.push(`${label}: ${owned ? "linkado" : exists(dest) ? "presente (nao gerenciado)" : "ausente"}`);
+      out.push(`${label}: ${owned ? "linked" : exists(dest) ? "present (not managed)" : "missing"}`);
     } else if (opts.command === "install") {
-      if (owned) out.push(`${label}: ja instalado`);
-      else if (exists(dest)) out.push(`${label}: PULADO, destino existe e nao e deste toolkit`);
-      else out.push(`${label}: ${opts.dryRun ? "instalaria" : place(asset, dest, opts.copy)}`);
+      if (owned) out.push(`${label}: already installed`);
+      else if (exists(dest)) out.push(`${label}: SKIPPED, destination exists and does not belong to this toolkit`);
+      else out.push(`${label}: ${opts.dryRun ? "would install" : place(asset, dest, opts.copy)}`);
     } else if (owned) {
       if (!opts.dryRun) fs.rmSync(dest, { recursive: true });
-      out.push(`${label}: ${opts.dryRun ? "removeria" : "removido"}`);
+      out.push(`${label}: ${opts.dryRun ? "would remove" : "removed"}`);
     }
   }
   return out;

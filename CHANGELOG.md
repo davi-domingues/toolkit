@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- Toda a saida da CLI (ajuda, status, erros e validacao) passa a ser em ingles. Os assets nao mudam.
+
 ## 0.3.0
 - **Quebra:** o comando passa de `toolkit` para `dod-toolkit`, para conviver com outros toolkits.
 - **Quebra:** todos os assets ganham o prefixo `dodtk-` (ex.: `dodtk-java-testing-patterns`, `/dodtk-revisar-diff`); `validate` falha em asset sem o prefixo. Quem tem a 0.2.0 deve rodar `toolkit uninstall` antes de atualizar.
