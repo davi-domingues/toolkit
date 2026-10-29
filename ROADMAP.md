@@ -8,21 +8,12 @@ _Nothing yet._
 
 ## Ideas
 
-### Package and registry
-
-Ship the toolkit as an installable CLI package so a new machine only needs one command. Not refined yet; open questions below.
-
-- Turn the repo into a scoped package (`@davi-domingues/toolkit`) with a `bin` entry and a `files` whitelist (`scripts`, `skills`, `agents`, `rules`, `prompts`). The installer currently finds content from the repo root, so it must read from the package directory instead.
-- Publish on tag `vX.Y.Z` through GitHub Actions, checking that the tag matches the `package.json` version and running validate and tests first.
-- Registry options:
-  - **GitHub Packages (npm):** keeps everything on GitHub and needs no new account. The package follows the repo visibility, and installing needs a token with `read:packages` (to verify: whether fine-grained tokens are accepted).
-  - **npmjs.com:** public and installable without a token or `.npmrc`.
-- Open questions: which registry, whether the package should be public, and how the first release is cut.
-
 ### Other
 
 _Add ideas here._
 
 ## Done
+
+- **Package and registry.** Published as `@davi-domingues/toolkit` on GitHub Packages (npm), released by the `publish` workflow on `vX.Y.Z` tags. Decision: GitHub Packages over npmjs.com to keep everything on GitHub; the trade-off is that installing needs a classic token with `read:packages`, even though the repo is public.
 
 See the [CHANGELOG](CHANGELOG.md).
