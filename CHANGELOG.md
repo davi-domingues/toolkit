@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+- New skills: `dodtk-readme-refresh`, `dodtk-quality-review`, `dodtk-exercise-repo-builder`, `dodtk-resume-builder` and `dodtk-create-commit` (generalized for any repo, with or without tickets).
+- `dodtk-java-testing-patterns`: stack-agnostic testing philosophy, AAA markers only when they help readability, and no other comments in tests.
+- README lists every skill and states the contribution policy: pull requests from collaborators only, issues open to everyone, with issue forms for bugs and skill requests.
 - Repo hardening: release flow through pull requests documented in CONTRIBUTING, SECURITY policy, Dependabot, CODEOWNERS, least-privilege workflow permissions, actions pinned by SHA and a `release` environment on publish.
 
 ## 0.3.1

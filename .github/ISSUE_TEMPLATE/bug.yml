@@ -1,0 +1,30 @@
+name: Bug report
+description: Something in the CLI or in an asset does not work as described.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting. Pull requests from outside collaborators are not accepted, so describe the problem here and I will fix it. Security problems go through SECURITY.md, not issues.
+  - type: input
+    id: area
+    attributes:
+      label: Command or asset
+      description: For example `dod-toolkit install` or `dodtk-readme-refresh`.
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. ...\n2. ..."
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: Toolkit version, OS, Node version and AI tool (Kiro, Claude Code, OpenCode).
