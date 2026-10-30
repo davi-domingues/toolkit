@@ -1,0 +1,91 @@
+{
+  "_doc": "Perfis de stack usados pelo scaffold.py. github_setup = steps YAML (sem indentacao base). build = comando de preparo (sem rodar testes). Para stacks fora da lista use 'generic' e edite o workflow.",
+  "java-maven": {
+    "label": "Java + Maven",
+    "github_setup": "- name: Set up Java 21\n  uses: actions/setup-java@v4\n  with:\n    distribution: temurin\n    java-version: '21'\n    cache: maven",
+    "gitlab_image": "maven:3.9-eclipse-temurin-21",
+    "build": "chmod +x mvnw 2>/dev/null; ./mvnw -q package -DskipTests",
+    "gitignore": ["target/", "HELP.md", ".mvn/wrapper/maven-wrapper.jar", "!**/src/main/**/target/", "!**/src/test/**/target/", ".classpath", ".project", ".settings/", ".factorypath", ".apt_generated", ".sts4-cache", "*.iml", "*.iws", "*.ipr"],
+    "gitattributes": ["/mvnw text eol=lf", "*.cmd text eol=crlf"]
+  },
+  "java-gradle": {
+    "label": "Java/Kotlin + Gradle",
+    "github_setup": "- name: Set up Java 21\n  uses: actions/setup-java@v4\n  with:\n    distribution: temurin\n    java-version: '21'\n    cache: gradle",
+    "gitlab_image": "eclipse-temurin:21-jdk",
+    "build": "chmod +x gradlew 2>/dev/null; ./gradlew -q assemble testClasses",
+    "gitignore": ["build/", ".gradle/", "!gradle/wrapper/gradle-wrapper.jar", "*.iml", "out/", "local.properties"],
+    "gitattributes": ["/gradlew text eol=lf", "*.bat text eol=crlf", "*.jar binary"]
+  },
+  "node": {
+    "label": "JavaScript/TypeScript + Node.js",
+    "github_setup": "- name: Set up Node.js\n  uses: actions/setup-node@v4\n  with:\n    node-version: '22'",
+    "gitlab_image": "node:22",
+    "build": "if [ -f package-lock.json ]; then npm ci; else npm install; fi",
+    "gitignore": ["node_modules/", "dist/", "coverage/", ".env", ".env.*", "!.env.example", "npm-debug.log*", "test-results/", "playwright-report/"],
+    "gitattributes": []
+  },
+  "python": {
+    "label": "Python",
+    "github_setup": "- name: Set up Python\n  uses: actions/setup-python@v5\n  with:\n    python-version: '3.12'",
+    "gitlab_image": "python:3.12",
+    "build": "python3 -m pip install -q --upgrade pip; if [ -f requirements.txt ]; then python3 -m pip install -q -r requirements.txt; fi; if [ -f pyproject.toml ]; then python3 -m pip install -q -e '.[test]' 2>/dev/null || python3 -m pip install -q -e .; fi",
+    "gitignore": ["__pycache__/", "*.py[cod]", ".venv/", "venv/", ".pytest_cache/", ".mypy_cache/", ".coverage", "htmlcov/", "*.egg-info/", "dist/", "build/", ".env"],
+    "gitattributes": []
+  },
+  "dotnet": {
+    "label": "C# + .NET",
+    "github_setup": "- name: Set up .NET\n  uses: actions/setup-dotnet@v4\n  with:\n    dotnet-version: '8.0.x'",
+    "gitlab_image": "mcr.microsoft.com/dotnet/sdk:8.0",
+    "build": "dotnet restore && dotnet build --no-restore",
+    "gitignore": ["bin/", "obj/", "*.user", "*.suo", ".vs/", "TestResults/", "coverage*.xml"],
+    "gitattributes": ["*.sln text eol=crlf"]
+  },
+  "go": {
+    "label": "Go",
+    "github_setup": "- name: Set up Go\n  uses: actions/setup-go@v5\n  with:\n    go-version: 'stable'",
+    "gitlab_image": "golang:1.23",
+    "build": "go build ./... && go vet ./...",
+    "gitignore": ["bin/", "*.exe", "*.test", "*.out", "coverage.*"],
+    "gitattributes": []
+  },
+  "rust": {
+    "label": "Rust",
+    "github_setup": "- name: Set up Rust\n  uses: dtolnay/rust-toolchain@stable",
+    "gitlab_image": "rust:1",
+    "build": "cargo build --tests -q",
+    "gitignore": ["target/", "**/*.rs.bk"],
+    "gitattributes": []
+  },
+  "php": {
+    "label": "PHP",
+    "github_setup": "- name: Set up PHP\n  uses: shivammathur/setup-php@v2\n  with:\n    php-version: '8.3'\n    tools: composer",
+    "gitlab_image": "php:8.3-cli",
+    "build": "composer install --no-interaction --prefer-dist -q",
+    "gitignore": ["vendor/", ".phpunit.result.cache", ".phpunit.cache/", ".env"],
+    "gitattributes": []
+  },
+  "ruby": {
+    "label": "Ruby",
+    "github_setup": "- name: Set up Ruby\n  uses: ruby/setup-ruby@v1\n  with:\n    ruby-version: '3.3'\n    bundler-cache: true",
+    "gitlab_image": "ruby:3.3",
+    "build": "bundle install --quiet",
+    "gitignore": [".bundle/", "vendor/bundle/", "coverage/", "log/", "tmp/"],
+    "gitattributes": []
+  },
+  "c-cpp": {
+    "label": "C/C++",
+    "github_setup": "",
+    "gitlab_image": "gcc:14",
+    "build": "if [ -f CMakeLists.txt ]; then cmake -S . -B build && cmake --build build; elif [ -f Makefile ]; then make; fi",
+    "gitignore": ["build/", "*.o", "*.out", "*.exe", "*.a", "*.so"],
+    "gitattributes": ["*.sh text eol=lf"]
+  },
+  "generic": {
+    "label": "Generico",
+    "github_setup": "",
+    "gitlab_image": "ubuntu:24.04",
+    "build": "true",
+    "gitignore": [],
+    "gitattributes": []
+  }
+}

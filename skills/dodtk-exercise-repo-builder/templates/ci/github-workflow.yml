@@ -1,0 +1,41 @@
+# Workflow de autograding (independente do GitHub Classroom).
+# Roda em todo push/PR, executa .github/classroom/autograding.json via grade.py
+# e publica a nota no resumo do job + relatorio JUnit como artefato.
+name: Autograding
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  autograding:
+    name: Autograding
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+{{GITHUB_SETUP}}
+      - name: Build (sem testes)
+        # continue-on-error: erro de compilacao vira nota 0 com log, em vez de job sem relatorio
+        continue-on-error: true
+        run: |
+          {{BUILD_CMD}}
+
+      - name: Autograder
+        run: python3 .github/classroom/grade.py --junit grading-report.xml --json grading-result.json
+
+      - name: Relatorio
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: grading-report
+          path: |
+            grading-report.xml
+            grading-result.json
+          if-no-files-found: ignore

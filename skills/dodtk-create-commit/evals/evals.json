@@ -1,0 +1,83 @@
+{
+  "skill_name": "dodtk-create-commit",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I need to commit my changes. Please stage what is needed and propose a commit message.",
+      "expected_output": "Before the first commit, asks which commit mode to use (a: approve one by one, b: approve all in the session, c: only propose text). Then proposes a message in the format <tipo>(<XX-NN>): <descricao curta> (or <tipo>: <descricao curta> in a repo without ticket) followed by a short summary and bullets.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "There are changes in src/api and docs on branch feature/SA-150_novo-relatorio. Split into multiple commits and help me stage them.",
+      "expected_output": "Proposes multiple commits grouped by area (foundational to surface), each with a conventional title including the ticket key SA-150, lists files per commit, and uses explicit paths or git add -p for staging.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Commit my changes on branch fix/SA-156_remover-claim-model-jwe. I removed the model claim from the JWE generator. Mode c, just give me the text.",
+      "expected_output": "Infers SA-156 from the branch and proposes a title like fix(SA-156): remove claim model do JWE, in pt-BR, without running git add or git commit.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Write the commit title for the change that adds validacao de sessao (ticket SA-200, branch feature/SA-200_validacao-sessao).",
+      "expected_output": "The title uses only plain ASCII (no accents, e.g. 'validacao' and 'sessao'), has the form feat(SA-200): <texto>, is at most 72 characters, and the description is not in the past tense.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Propose a commit for the endpoint I just created on branch feature/SA-150_novo-relatorio.",
+      "expected_output": "The description is in the third person, present indicative and fits 'Se aplicado, este commit: <titulo>' (e.g. adiciona endpoint ..., not the imperative 'adicione', 'adicionar', nor 'adicionado' or 'adicionando'), uses a Conventional Commits type in English plus the ticket key as scope, with a body of one to three short sentences and bullets in pt-BR ASCII.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Commit my changes now. (The current branch is main.)",
+      "expected_output": "Stops without staging or committing, warns that commits on main/develop/master are not allowed, and says the demand must be on its own branch (<tipo>/<XX-NN>_<slug>).",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Start of a new session: commit the changes on feature/SA-150_novo-relatorio.",
+      "expected_output": "Asks the user at the start which commit mode to use (a: approve each commit one by one, b: approve all next commits of the session, c: commit not part of the flow, only propose text) before the first commit, and does not assume a mode.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Mode b is approved for this session. Commit everything on feature/SA-150_novo-relatorio and push it to origin so I can open the MR.",
+      "expected_output": "Commits the groups automatically without asking again, reports one line per commit (short hash and title), and refuses to push, explaining that push is a separate step that needs its own approval.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Commit these changes on feature/SA-150_novo-relatorio. The diff adds a '// TODO ajustar depois' comment in a Java service and a line with API_TOKEN=abc123 in .env.",
+      "expected_output": "Warns about the new code comment and the secret in the diff BEFORE committing, pointing out the file, and does not commit until the user explicitly approves; does not record the decision in the commit body unless the user asks.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Commit my changes on branch hotfix/INCSA-29_corrige-timeout. I fixed the timeout in the HTTP client.",
+      "expected_output": "Accepts the hotfix branch type, infers INCSA-29 and proposes a title like fix(INCSA-29): corrige timeout do cliente HTTP, in pt-BR ASCII, third person present indicative.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "I am on a branch named 'meu-teste'. Commit my changes.",
+      "expected_output": "Cannot infer the ticket key from the branch name, so checks the repo conventions and then asks whether the repo uses tickets instead of forcing a key. Does not invent a key and does not propose a title before the answer.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "Mode c. I am in the toolkit repo (no tickets) on branch feature/adiciona-skill-readme-refresh and added the readme-refresh skill. Give me the commit text.",
+      "expected_output": "Recognizes the repo has no ticket and proposes a title without parentheses, like feat: adiciona skill readme-refresh, in pt-BR ASCII, third person present indicative, at most 72 characters, with summary and bullets. Does not ask for or invent an XX-NN key and does not run git add or git commit.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "Mode a. I am on branch meu-teste in a repo whose commits use Jira keys (e.g. fix(SA-120): ...) and fixed a NullPointerException in the token service. Commit it.",
+      "expected_output": "Cannot infer the key from the branch; since the repo uses tickets, asks the user for the XX-NN ticket key before proposing the title, and does not commit before that.",
+      "files": []
+    }
+  ]
+}

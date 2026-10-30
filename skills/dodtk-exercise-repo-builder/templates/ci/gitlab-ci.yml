@@ -1,0 +1,21 @@
+# Pipeline de autograding para GitLab CI.
+# Executa .github/classroom/autograding.json via grade.py e publica relatorio JUnit (aba Tests do MR).
+image: {{GITLAB_IMAGE}}
+
+stages:
+  - grade
+
+autograding:
+  stage: grade
+  before_script:
+    - command -v python3 >/dev/null 2>&1 || (apt-get update -qq && apt-get install -y -qq python3) || apk add --no-cache python3
+    - |
+      {{BUILD_CMD}} || echo "build falhou - os testes vao registrar nota 0"
+  script:
+    - python3 .github/classroom/grade.py --junit grading-report.xml --json grading-result.json
+  artifacts:
+    when: always
+    paths:
+      - grading-result.json
+    reports:
+      junit: grading-report.xml
