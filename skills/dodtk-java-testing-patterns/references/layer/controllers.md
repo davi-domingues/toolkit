@@ -26,41 +26,40 @@ class <Domain>APIControllerTest {
 
     @BeforeEach
     void setUp() {
-        // 1. Manually mock the Use Case
         useCase = mock(<Domain>UseCase.class);
-        
-        // 2. Instantiate Controller
         <Domain>APIController controller = new <Domain>APIController(useCase);
-        
-        // 3. Build MockMvc standalone
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
-            // .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()) // If needed
-            .build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
     void givenValidRequest_whenEndpoint_thenReturnExpectedStatusAndJson() throws Exception {
-        // Arrange
-        // when(useCase.action(any())).thenReturn(expectedResponse);
+        when(useCase.action(any())).thenReturn(expectedResponse);
 
-        // Act & Assert
-        // mockMvc.perform(post("/api/v1/...")
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .content(objectMapper.writeValueAsString(request)))
-        //     .andExpect(status().isCreated())
-        //     .andExpect(jsonPath("$.field").value("expectedValue"));
-        
-        // verify(useCase).action(...)
+        mockMvc.perform(post("/api/v1/<resource>")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.field").value("expectedValue"));
+
+        verify(useCase).action(any());
     }
 
     @Test
     void givenInvalidCondition_whenEndpoint_thenReturnErrorStatus() throws Exception {
-        // Arrange
-        // doThrow(new AppException(...)).when(useCase).action(...);
+        doThrow(new AppException(Error.<ERROR_CODE>)).when(useCase).delete(id);
 
-        // Act & Assert
-        // mockMvc.perform(delete("/api/v1/.../{id}", id))
-        //     .andExpect(status().isNotFound());
+        mockMvc.perform(delete("/api/v1/<resource>/{id}", id))
+                .andExpect(status().isNotFound());
+
+        verify(useCase).delete(id);
     }
 }
+```
+
+When the endpoint accepts `Pageable`, build the `MockMvc` with the resolver:
+
+```java
+mockMvc = MockMvcBuilders.standaloneSetup(controller)
+        .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+        .build();
 ```

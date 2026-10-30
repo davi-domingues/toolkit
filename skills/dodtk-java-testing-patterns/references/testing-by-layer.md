@@ -34,6 +34,8 @@ Writing a test for...
     → See: layer/infrastructure.md
 ```
 
+The skeletons in `layer/*.md` are comment-free; names between `<...>` are placeholders to replace with the real types. The `// Arrange` / `// Act` / `// Assert` markers follow the criterion in [test-structure.md](test-structure.md).
+
 ## At a Glance
 
 | Layer | Spring context? | Mocking strategy | Assertion style |

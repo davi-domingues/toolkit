@@ -19,15 +19,12 @@ class <Config>Test {
 
     @Test
     void givenConfigClass_whenMethodCalled_thenReturnExpectedConfiguration() {
-        // Arrange
-        // <Config>Class config = new <Config>Class();
+        <Config>Class config = new <Config>Class();
 
-        // Act
-        // Object result = config.someBeanMethod();
+        <BeanType> result = config.someBeanMethod();
 
-        // Assert
-        // assertNotNull(result);
-        // assertEquals("Expected Value", result.getProperty());
+        assertNotNull(result);
+        assertEquals("Expected Value", result.getProperty());
     }
 }
 ```

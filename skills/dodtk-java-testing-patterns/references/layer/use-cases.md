@@ -24,39 +24,43 @@ class <Domain>UseCaseImplTest {
 
     @Mock
     private <Domain>PersistencePort persistencePort;
-    
-    // Other mocked ports/mappers as needed
-    
+
+    @Mock
+    private <Other>Port otherPort;
+
     @InjectMocks
     private <Domain>UseCaseImpl useCase;
-    
+
+    private <Domain>Entity entity;
+
     @BeforeEach
     void setUp() {
-        // Initialize common fixtures, reusable entities
+        entity = new <Domain>Entity();
     }
-    
+
     @Test
     void givenValidInput_whenAction_thenExpectedResult() {
-        // Arrange
-        // when(persistencePort.find(...)).thenReturn(...);
-        
-        // Act
-        // ResultType result = useCase.action(...);
-        
-        // Assert
-        // Assert state (result values)
-        // verify(persistencePort).find(...) (Verify behavior)
+        UUID id = UUID.randomUUID();
+        when(persistencePort.find(id)).thenReturn(entity);
+
+        ResultType result = useCase.action(id);
+
+        assertNotNull(result);
+        verify(persistencePort).find(id);
     }
-    
+
     @Test
     void givenInvalidCondition_whenAction_thenThrowException() {
-        // Arrange
-        // doThrow(...).when(persistencePort).action(...);
-        
-        // Act & Assert
-        // assertThrows(AppException.class, () -> useCase.action(...));
-        // verify(port).action(...)
-        // verify(otherPort, never()).action(...)
+        UUID id = UUID.randomUUID();
+        doThrow(new AppException(Error.<ERROR_CODE>)).when(persistencePort).action(id);
+
+        AppException ex = assertThrows(AppException.class, () -> useCase.action(id));
+
+        assertEquals(Error.<ERROR_CODE>, ex.getError());
+        verify(persistencePort).action(id);
+        verify(otherPort, never()).action(id);
     }
 }
 ```
+
+Add one `@Mock` per outgoing port or mapper the use case depends on.

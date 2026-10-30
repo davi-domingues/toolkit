@@ -20,30 +20,28 @@ class <Domain>ModelTest {
 
     @Test
     void givenSameFields_whenCompare_thenBeEqual() {
-        // Arrange
-        // UUID id = UUID.randomUUID();
-        // Model model1 = new Model(id, "Value");
-        // Model model2 = new Model(id, "Value");
+        UUID id = UUID.randomUUID();
+        Model model1 = new Model(id, "Value");
+        Model model2 = new Model(id, "Value");
 
-        // Act & Assert
-        // assertEquals(model1, model2);
-        // assertEquals(model1.hashCode(), model2.hashCode());
+        assertEquals(model1, model2);
+        assertEquals(model1.hashCode(), model2.hashCode());
     }
 
     @Test
     void givenModel_whenAccessFields_thenReturnCorrectValues() {
-        // Arrange
-        // Model model = new Model(id, "Value");
+        UUID id = UUID.randomUUID();
+        Model model = new Model(id, "Value");
 
-        // Act & Assert
-        // assertEquals(id, model.id());
-        // assertEquals("Value", model.valueField());
+        assertEquals(id, model.id());
+        assertEquals("Value", model.valueField());
     }
-    
+
     @Test
     void givenInvalidData_whenConstruct_thenThrowException() {
-        // If your record has a compact constructor with validation
-        // assertThrows(IllegalArgumentException.class, () -> new Model(null));
+        assertThrows(IllegalArgumentException.class, () -> new Model(null, "Value"));
     }
 }
 ```
+
+Include the third test only when the record has a compact constructor with validation.
