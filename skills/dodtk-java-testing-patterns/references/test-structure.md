@@ -1,23 +1,28 @@
 # Test Structure
 
+Contents:
+- Standard Class Skeleton
+- AAA Pattern and phase markers
+- Test Ordering Within a Class
+- `@BeforeEach` — What Goes Here
+- Private Factory Methods
+- `@AfterEach` — When to Use
+
 ## Standard Class Skeleton
 
 ```java
 @ExtendWith(MockitoExtension.class)
 class UserUseCaseImplTest {
 
-    // Dependencies — one @Mock per port/dependency
     @Mock
     private UserPersistencePort userPersistencePort;
 
     @Mock
     private ProjectUserPort projectUserPort;
 
-    // Class under test
     @InjectMocks
     private UserUseCaseImpl useCase;
 
-    // Shared fixtures — initialized in setUp()
     private UUID userId;
     private UserEntity userEntity;
 
@@ -32,13 +37,10 @@ class UserUseCaseImplTest {
 
     @Test
     void givenExistingUser_whenGetById_thenReturnUser() {
-        // Arrange
         when(userPersistencePort.getUserById(userId)).thenReturn(userEntity);
 
-        // Act
         User result = useCase.getUserById(userId);
 
-        // Assert
         assertNotNull(result);
         assertEquals("Test User", result.name());
         verify(userPersistencePort).getUserById(userId);
@@ -46,10 +48,8 @@ class UserUseCaseImplTest {
 
     @Test
     void givenNonExistentUser_whenGetById_thenThrowException() {
-        // Arrange
         when(userPersistencePort.getUserById(userId)).thenThrow(new AppException(Error.USER_NOT_FOUND));
 
-        // Assert + Act
         assertThrows(AppException.class, () -> useCase.getUserById(userId));
         verify(userPersistencePort).getUserById(userId);
     }
@@ -58,22 +58,65 @@ class UserUseCaseImplTest {
 
 ## AAA Pattern
 
-Every test must follow Arrange-Act-Assert with explicit comments:
+Every test follows Arrange-Act-Assert as its mental structure, with the phases separated by blank lines:
+
+- **Arrange** — set up mocks and inputs
+- **Act** — call the method under test (single call)
+- **Assert** — verify return value AND mock interactions
+
+### Phase markers (`// Arrange`, `// Act`, `// Assert`)
+
+The markers are an exception to the "no comments in code" rule and are **optional**. Use them only when both are true:
+
+- the test has three clearly distinct phases; and
+- the markers improve readability (long setup, several interactions, several asserts).
+
+Do **not** use them in short or obvious tests (1-3 lines, no relevant setup, simple parameterized tests): the blank-line separation is enough. Never add any other comment to a test.
+
+With markers (long setup, several interactions and asserts):
 
 ```java
-// Arrange  — set up mocks and inputs
-// Act      — call the method under test (single call)
-// Assert   — verify return value AND mock interactions
+@Test
+void givenValidRequest_whenCreateProject_thenPersistAndNotifyMembers() {
+    // Arrange
+    ProjectRequest request = new ProjectRequest("Test Project", List.of(memberId, ownerId));
+    when(userPersistencePort.getUserById(ownerId)).thenReturn(ownerEntity);
+    when(userPersistencePort.getUserById(memberId)).thenReturn(memberEntity);
+    when(projectPersistencePort.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // Act
+    Project result = useCase.create(request);
+
+    // Assert
+    assertNotNull(result);
+    assertEquals("Test Project", result.name());
+    assertEquals(2, result.members().size());
+    verify(projectPersistencePort).save(any());
+    verify(notificationPort, times(2)).notifyMember(any());
+}
 ```
 
-When the assertion is `assertThrows`, combine Act and Assert:
+Without markers (short test):
 
 ```java
-// Arrange
+@Test
+void givenExistingUser_whenGetById_thenReturnUser() {
+    when(port.findById(id)).thenReturn(Optional.of(userEntity));
+
+    User result = useCase.getById(id);
+
+    assertEquals("Test User", result.name());
+    verify(port).findById(id);
+}
+```
+
+When the assertion is `assertThrows`, Act and Assert are combined in the same statement:
+
+```java
 when(port.findById(id)).thenReturn(Optional.empty());
 
-// Act + Assert
 AppException ex = assertThrows(AppException.class, () -> useCase.getById(id));
+
 assertEquals(Error.NOT_FOUND, ex.getError());
 verify(port).findById(id);
 verify(port, never()).save(any());
@@ -88,13 +131,10 @@ Order test methods to tell a story:
 3. **Error/exception paths** — invalid inputs, not-found, conflicts
 
 ```java
-// 1. Happy path
 void givenValidRequest_whenCreate_thenReturnCreated() { }
 
-// 2. Alternative
 void givenExistingUser_whenCreateOrFind_thenReturnExisting() { }
 
-// 3. Errors
 void givenDuplicateName_whenCreate_thenThrowException() { }
 void givenNonExistentId_whenGetById_thenThrowException() { }
 ```
@@ -106,20 +146,17 @@ Put in `setUp()` only what is **shared across multiple tests** in the class:
 ```java
 @BeforeEach
 void setUp() {
-    // IDs
     projectId = UUID.randomUUID();
 
-    // Entities with common state
     projectEntity = new ProjectEntity();
     projectEntity.setId(projectId);
     projectEntity.setName("Test Project");
 
-    // Expected responses
     projectResponse = new ProjectResponse(projectId, "Test Project");
 }
 ```
 
-Test-specific setup stays inside the test's `// Arrange` block — do not pollute `setUp()` with it.
+Test-specific setup stays inside the test's arrange phase — do not pollute `setUp()` with it.
 
 ## Private Factory Methods
 
@@ -144,7 +181,7 @@ private UserEntity createUserEntity(UUID id, String name) {
 }
 ```
 
-Do **not** create factory methods for entities used in only one or two tests — inline them in `// Arrange`.
+Do **not** create factory methods for entities used in only one or two tests — inline them in the test's arrange phase.
 
 ## `@AfterEach` — When to Use
 
@@ -160,6 +197,6 @@ void setUp() {
 
 @AfterEach
 void tearDown() {
-    springApplicationMock.close(); // mandatory — prevents state leaking between tests
+    springApplicationMock.close();
 }
 ```

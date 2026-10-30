@@ -1,0 +1,23 @@
+name: Idea or skill request
+description: Suggest a new skill, prompt, rule or improvement.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Suggestions are welcome. Pull requests from outside collaborators are not accepted, so describe the idea here instead of sending code.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want the agent to do
+      description: The task or problem, and when the skill should trigger.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example
+      description: A prompt you would type and the result you expect.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else

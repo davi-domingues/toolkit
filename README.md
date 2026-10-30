@@ -3,7 +3,7 @@
 # toolkit
 
 **My toolbox for AI coding agents.**
-Skills, agents, rules and prompts in one place, versioned and installed with a single command.
+Skills, agents, rules and prompts in one place, versioned and installed with a single command. Mostly for software work, with a few general-purpose skills such as resume writing.
 
 ![node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)
 ![deps](https://img.shields.io/badge/dependencies-0-brightgreen)
@@ -62,7 +62,7 @@ node bin/toolkit.js install
 
 | Folder | What it is | Examples |
 |---|---|---|
-| `skills/` | Capabilities the agent loads on demand (`SKILL.md` + `references/`) | `dodtk-expo-expert`, `dodtk-feature-builder`, `dodtk-java-testing-patterns` |
+| `skills/` | Capabilities the agent loads on demand (`SKILL.md` + `references/`) | see [Skills](#skills) |
 | `agents/` | Standalone subagents, one `.md` per agent | (coming soon) |
 | `rules/` | Always-on global rules | `dodtk-global.md` |
 | `prompts/` | Reusable prompts, exposed as slash commands | `dodtk-revisar-diff`, `dodtk-orquestrar` |
@@ -80,6 +80,19 @@ toolkit/
 ├── scripts/toolkit.mjs
 └── test/
 ```
+
+## Skills
+
+| Skill | What it does |
+|---|---|
+| `dodtk-create-commit` | Groups changes and writes Conventional Commits in pt-BR ASCII, with the ticket key as scope when the repo uses tickets. Never pushes. |
+| `dodtk-exercise-repo-builder` | Turns an idea into a ready-to-start exercise repo: statement, starter code, tests, autograding and CI, for any stack. |
+| `dodtk-expo-expert` | Guidance for Expo projects: setup, routing, theming, navigation and SDK packages. |
+| `dodtk-feature-builder` | Implements features already split into task files, with developer and verifier sub-agents in waves. |
+| `dodtk-java-testing-patterns` | Unit test standard for Java (JUnit 5, Mockito, AssertJ, MockMvc), per layer. Touches only test files. |
+| `dodtk-quality-review` | Quality review limited to a branch's changes, in three approved phases: plan, apply, commit. |
+| `dodtk-readme-refresh` | Rewrites a project's README from the real code (AS IS), commits it in the repo's convention and pushes after approval. |
+| `dodtk-resume-builder` | Creates, tailors and reviews resumes for a job opening, ATS-friendly, without inventing experience. |
 
 ## Where everything goes
 
@@ -115,6 +128,10 @@ Installer principles:
 1. Create the file in the right folder, with a name starting with `dodtk-`. For skills, `skills/dodtk-<name>/SKILL.md` with `name` equal to the folder name and a `description` that says *when* to use it. `validate` fails on any asset without the prefix.
 2. Run `npm run validate && npm test`.
 3. Note it in `CHANGELOG.md` and open a PR. CI runs validation and tests on Node 20 and 22.
+
+## Contributions
+
+This repository holds my own skills and assets. For now, only collaborators can open pull requests, and outside pull requests are not accepted. Issues are welcome: report a bug or suggest a skill through the [issue forms](https://github.com/davi-domingues/toolkit/issues/new/choose). Report security problems as described in [SECURITY](SECURITY.md).
 
 ## Roadmap
 

@@ -1,6 +1,14 @@
 # Contributing
 
-`main` is protected by a ruleset: no direct pushes, no force pushes, linear history, and the `ci` checks must pass. Every change, including releases, goes through a pull request.
+This toolkit is the source of my own skills and assets, so **only collaborators can open pull requests** and outside pull requests are not accepted for now. Anyone can still help:
+
+- **Bugs:** open a [bug report](https://github.com/davi-domingues/toolkit/issues/new?template=bug.yml).
+- **Ideas and skill requests:** open a [request](https://github.com/davi-domingues/toolkit/issues/new?template=request.yml).
+- **Security:** follow [SECURITY](SECURITY.md) and do not open a public issue.
+
+The rest of this file describes my own workflow.
+
+`main` is protected by a ruleset: no direct pushes, no force pushes, linear history, squash merges only, and the `ci` checks (`validate (20)` and `validate (22)`) must pass. Every change, including releases, goes through a pull request.
 
 ## Changing the toolkit
 

@@ -1,5 +1,13 @@
 # Assertions
 
+Contents:
+- Two Accepted Libraries
+- AssertJ — Preferred for New Tests
+- JUnit Assertions — Accepted for Existing Tests
+- Dual Verification — State + Behavior
+- MockMvc Assertions — Controller Tests
+- What Not to Use
+
 ## Two Accepted Libraries
 
 Both are available via `spring-boot-starter-test`. Use AssertJ for new tests; JUnit Assertions are accepted when editing existing tests that already use them.
@@ -91,8 +99,11 @@ assertFalse(result.isEmpty());
 ```java
 assertThrows(AppException.class, () -> useCase.getById(id));
 assertDoesNotThrow(() -> useCase.delete(id));
+```
 
-// Capture exception to assert on its fields
+Capture the exception to assert on its fields:
+
+```java
 AppException ex = assertThrows(AppException.class, () -> useCase.create(request));
 assertEquals(Error.AUTOMATION_FLOW_NAME_ALREADY_EXISTS, ex.getError());
 ```
@@ -109,12 +120,12 @@ assertSame(entity, saved);
 
 Every test must verify both what was **returned** and how **mocks were called**.
 
+State is what came back; behavior is how dependencies were used.
+
 ```java
-// State — what came back
 assertThat(result).isNotNull();
 assertThat(result.name()).isEqualTo("Test User");
 
-// Behavior — how dependencies were used
 verify(persistencePort, times(1)).create(any(UserEntity.class));
 verify(projectUserPort, never()).findAllByProjectId(any());
 ```
@@ -143,7 +154,6 @@ mockMvc.perform(get("/api/v1/user/{id}", userId))
 mockMvc.perform(delete("/api/v1/user/{id}", userId))
     .andExpect(status().isNoContent());
 
-// Error scenario
 mockMvc.perform(get("/api/v1/user/{id}", unknownId))
     .andExpect(status().isNotFound());
 ```

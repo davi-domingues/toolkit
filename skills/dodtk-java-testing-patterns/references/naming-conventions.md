@@ -60,10 +60,9 @@ void save_WhenEntityIsValid_ShouldPersistAndReturn() { }
 
 ### Alternative 3 — `test*` (legacy only)
 
-Do **not** use in new tests. Acceptable only when editing existing tests that already follow this style.
+Do **not** use in new tests. Acceptable only for maintenance of existing tests that already follow this style.
 
 ```java
-// Only for maintenance of existing tests
 void testCreateUser() { }
 void testGetUserById_UserFound() { }
 ```

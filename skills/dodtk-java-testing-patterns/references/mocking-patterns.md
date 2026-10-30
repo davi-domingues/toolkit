@@ -1,5 +1,14 @@
 # Mocking Patterns
 
+Contents:
+- Standard — `@Mock` + `@InjectMocks`
+- Manual `mock()` in `@BeforeEach`
+- Stubbing (return, throw, void, dynamic)
+- Verification (basic, never, no more interactions)
+- `ArgumentCaptor` and `argThat`
+- Static Mocking
+- Avoiding Unnecessary Stubbing
+
 ## Standard — `@Mock` + `@InjectMocks`
 
 The dominant pattern. Use for all Use Cases and Persistence Adapters.
@@ -151,7 +160,7 @@ class AccessManagementApiApplicationMainTest {
 
     @AfterEach
     void tearDown() {
-        springApplicationMock.close(); // mandatory — leaks between tests if omitted
+        springApplicationMock.close();
     }
 
     @Test
@@ -169,13 +178,17 @@ class AccessManagementApiApplicationMainTest {
 
 Only stub what the specific test needs. Unnecessary stubs cause `UnnecessaryStubbingException` with `MockitoExtension`.
 
+Bad — stubs `findAll` even though this test only calls `findById`:
+
 ```java
-// BAD — stubs findAll even though this test only calls findById
 when(port.findAll()).thenReturn(List.of());
 when(port.findById(id)).thenReturn(Optional.of(entity));
 useCase.getById(id);
+```
 
-// GOOD — only what this test uses
+Good — only what this test uses:
+
+```java
 when(port.findById(id)).thenReturn(Optional.of(entity));
 useCase.getById(id);
 ```

@@ -1,5 +1,13 @@
 # Parameterized Tests
 
+Contents:
+- `@ValueSource`
+- `@CsvSource`
+- `@MethodSource`
+- `@EnumSource`
+- Naming Parameterized Tests
+- When to Use vs. Separate Test Methods
+
 Use `@ParameterizedTest` when the same behavior needs to be verified with multiple inputs. This avoids duplicating test methods that differ only in their data.
 
 `junit-jupiter-params` is included transitively via `spring-boot-starter-test` — no additional dependency needed.
@@ -61,10 +69,10 @@ void givenInvalidRequest_whenCreate_thenThrowException(UserRequest request) {
 
 static Stream<UserRequest> invalidUserRequests() {
     return Stream.of(
-        new UserRequest(null, "email@test.com"),       // null name
-        new UserRequest("", "email@test.com"),          // empty name
-        new UserRequest("Valid Name", null),            // null email
-        new UserRequest("Valid Name", "not-an-email")  // invalid email format
+        new UserRequest(null, "email@test.com"),
+        new UserRequest("", "email@test.com"),
+        new UserRequest("Valid Name", null),
+        new UserRequest("Valid Name", "not-an-email")
     );
 }
 ```
@@ -75,16 +83,20 @@ static Stream<UserRequest> invalidUserRequests() {
 
 Use to run a test against all or a subset of enum values.
 
+All values:
+
 ```java
-// All values
 @ParameterizedTest
 @EnumSource(EnumMood.class)
 void givenAnyMood_whenCreatePersona_thenAccept(EnumMood mood) {
     PersonaRequest request = new PersonaRequest("Assistant", "Description", mood);
     assertDoesNotThrow(() -> useCase.create(request));
 }
+```
 
-// Subset of values
+Subset of values:
+
+```java
 @ParameterizedTest
 @EnumSource(value = EnumMood.class, names = {"HAPPY", "NEUTRAL"})
 void givenPositiveMood_whenScore_thenReturnHighScore(EnumMood mood) {

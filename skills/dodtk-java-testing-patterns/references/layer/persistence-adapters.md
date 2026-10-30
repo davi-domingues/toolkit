@@ -29,34 +29,38 @@ class <Domain>PersistenceAdapterTest {
     @InjectMocks
     private <Domain>PersistenceAdapter adapter;
 
+    private <Domain> domain;
+    private <Domain>Entity entity;
+
     @BeforeEach
     void setUp() {
-        // Initialize shared entities and domain objects
+        domain = new <Domain>(UUID.randomUUID(), "Value");
+        entity = new <Domain>Entity();
     }
 
     @Test
     void givenValidDomain_whenSave_thenReturnSavedDomain() {
-        // Arrange
-        // Mock mapper to return Entity
-        // Mock repository save with thenAnswer
-        // Mock mapper to return Domain back
-        
-        // Act
-        // Domain result = adapter.save(domain);
-        
-        // Assert
-        // Verify state (result is mapped correctly)
-        // Verify behavior: verify(repository).save(entity)
+        when(mapper.toEntity(domain)).thenReturn(entity);
+        when(repository.save(any(<Domain>Entity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(mapper.toModel(entity)).thenReturn(domain);
+
+        <Domain> result = adapter.save(domain);
+
+        assertEquals(domain, result);
+        verify(repository).save(entity);
     }
 
     @Test
-    void givenNonExistentId_whenFind_thenReturnEmptyOrThrow() {
-        // Arrange
-        // when(repository.findById(id)).thenReturn(Optional.empty());
-        
-        // Act & Assert
-        // Verify it throws the expected exception or returns Optional.empty()
-        // verify(mapper, never()).toModel(any()) -> important to verify mapper wasn't called
+    void givenNonExistentId_whenFind_thenReturnEmpty() {
+        UUID id = UUID.randomUUID();
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        Optional<<Domain>> result = adapter.findById(id);
+
+        assertTrue(result.isEmpty());
+        verify(mapper, never()).toModel(any());
     }
 }
 ```
+
+The `never()` verification on the mapper confirms it was not called when nothing was found. When the adapter throws instead of returning an empty `Optional`, replace the call and the `isEmpty()` assertion with `assertThrows` on the expected exception.
